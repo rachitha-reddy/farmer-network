@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmer Resources Lending</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f1faee;
+    margin: 0;
+    color: #1b5e20;
+    padding: 0;
+  }
+
+  /* Left Sidebar styling */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 240px;
+    background: #e8f5e9;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 2px 0 8px rgba(44, 62, 80, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 32px;
+    z-index: 10;
+  }
+
+  .sidebar-brand {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 30px;
+    margin-bottom: 36px;
+  }
+  .sidebar-brand img {
+    width: 38px;
+    height: 38px;
+    margin-right: 13px;
+    border-radius: 50%;
+    background: #c8e6c9;
+    padding: 4px;
+  }
+  .sidebar-brand span {
+    font-size: 22px;
+    font-weight: bold;
+    color: #388e3c;
+    letter-spacing: 1px;
+    margin-left: 1px;
+  }
+  .sidebar-nav-link {
+    color: #215424;
+    padding: 14px 30px 14px 28px;
+    margin: 7px 8px;
+    width: calc(100% - 16px);
+    border-radius: 8px;
+    background: none;
+    font-weight: 600;
+    font-size: 18px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s, color 0.2s;
+    box-sizing: border-box;
+  }
+  .sidebar-nav-link i {
+    margin-right: 16px;
+    font-size: 19px;
+  }
+  .sidebar-nav-link.active,
+  .sidebar-nav-link:hover {
+    background-color: #c8e6c9;
+    color: #1b5e20;
+  }
+
+  /* Main content with margin for sidebar */
+  .container {
+    margin-left: 260px;
+    width: calc(100% - 280px);
+    max-width: 950px;
+    padding: 30px 0 40px 0;
+  }
+
+  header {
+    background-color: #388e3c;
+    color: white;
+    text-align: center;
+    padding: 22px 0 18px 0;
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 32px;
+    border-radius: 13px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 3px 8px rgba(44,62,80,0.04);
+  }
+
+  .section-title {
+    text-align: center;
+    margin: 40px 0 24px 0;
+    font-size: 26px;
+    text-decoration: underline;
+    color: #2e7d32;
+    font-weight: 600;
+  }
+
+  .resource-card {
+    background-color: #fff;
+    border-radius: 17px;
+    box-shadow: 0 4px 18px rgba(60, 80, 60, 0.06);
+    padding: 26px;
+    margin-bottom: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .resource-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 24px rgba(36, 64, 48, 0.09);
+  }
+  .resource-card h3 {
+    color: #2e7d32;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .resource-card p {
+    font-size: 17px;
+    color: #33691e;
+    margin-bottom: 8px;
+  }
+  #resourceForm input,
+  #resourceForm select,
+  #resourceForm button {
+    width: 100%;
+    padding: 9px 10px;
+    margin-top: 6px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background: #fafafa;
+  }
+  #resourceForm button {
+    background-color: #2e7d32;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  #resourceForm button:hover {
+    background-color: #1b5e20;
+  }
+  footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #2e7d32;
+    color: white;
+    font-size: 16px;
+    margin-top: 30px;
+    margin-left: 240px;
+    border-radius: 8px;
+    width: calc(100% - 260px);
+  }
+</style>
+<!-- FontAwesome CDN for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<!-- Sidebar Nav -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <!-- Use the exact logo as on your weather page! -->
+    <img src="img.jpg" alt="Logo">
+    <span>Farmer Network</span>
+  </div>
+  <a href="index.html" class="sidebar-nav-link"><i class="fa fa-home"></i> Home</a>
+  <a href="profile.html" class="sidebar-nav-link"><i class="fa fa-user"></i> Profile</a>
+  <a href="messages.html" class="sidebar-nav-link"><i class="fa fa-envelope"></i> Messages</a>
+  <a href="weather.html" class="sidebar-nav-link"><i class="fa fa-cloud-sun"></i> Weather</a>
+  <a href="resources.html" class="sidebar-nav-link active"><i class="fa fa-book"></i> Resources</a>
+  <a href="community.html" class="sidebar-nav-link"><i class="fa fa-users"></i> Community</a>
+  <a href="tips.html" class="sidebar-nav-link"><i class="fa fa-lightbulb"></i> Tips</a>
+  <a href="feedback.html" class="sidebar-nav-link"><i class="fa fa-star"></i> Feedback</a>
+</div>
+
+<div class="container">
+
+  <header>🚜 Farmer Resources Lending Hub 🚜</header>
+
+  <h2 class="section-title">Available Resources</h2>
+
+  <!-- Existing Resources with Contact Numbers -->
+  <div class="resource-card">
+    <h3>Tractor</h3>
+    <p>Status: <strong>Available</strong></p>
+    <p>Owner: Ramesh</p>
+    <p>Contact: <strong>9876543210</strong></p>
+    <p>Location: Village A (within 5 km)</p>
+    <p>Next Available: Immediately</p>
+  </div>
+
+  <div class="resource-card">
+    <h3>Harvester</h3>
+    <p>Status: <strong>Borrowed</strong></p>
+    <p>Owner: Suresh</p>
+    <p>Contact: <strong>9876512345</strong></p>
+    <p>Location: Village B (within 4 km)</p>
+    <p>Next Available: 3 days</p>
+  </div>
+
+  <div class="resource-card">
+    <h3>Sprayer</h3>
+    <p>Status: <strong>Available</strong></p>
+    <p>Owner: Lakshmi</p>
+    <p>Contact: <strong>9876509876</strong></p>
+    <p>Location: Village C (within 5 km)</p>
+    <p>Next Available: Immediately</p>
+  </div>
+
+  <h2 class="section-title">Add a New Resource</h2>
+
+  <div class="resource-card">
+    <form id="resourceForm">
+      <label for="resourceName">Resource Name:</label>
+      <input type="text" id="resourceName" name="resourceName" required>
+
+      <label for="ownerName">Owner Name:</label>
+      <input type="text" id="ownerName" name="ownerName" required>
+
+      <label for="contactNumber">Contact Number:</label>
+      <input type="tel" id="contactNumber" name="contactNumber" placeholder="e.g., 9876543210" required>
+
+      <label for="location">Location (Village/Area):</label>
+      <input type="text" id="location" name="location" placeholder="e.g., Village X" required>
+
+      <label for="status">Status:</label>
+      <select id="status" name="status">
+        <option value="Available">Available</option>
+        <option value="Borrowed">Borrowed</option>
+      </select>
+
+      <label for="nextAvailable">Next Available (days):</label>
+      <input type="number" id="nextAvailable" name="nextAvailable" min="0">
+
+      <button type="submit">Add Resource</button>
+    </form>
+  </div>
+</div>
+
+<script>
+ const form = document.getElementById('resourceForm');
+const container = form.parentElement;
+
+// Load resources from backend and render
+async function loadResources() {
+  try {
+    const res = await fetch('/api/resources');
+    const resources = await res.json();
+
+    // Remove existing resource cards except the form card
+    [...container.querySelectorAll('.resource-card')]
+      .filter(card => card !== form.parentElement)
+      .forEach(card => card.remove());
+
+    // Insert resource cards above the form
+    resources.forEach(r => {
+      const newCard = document.createElement('div');
+      newCard.classList.add('resource-card');
+      newCard.innerHTML = `
+        <h3>${r.name}</h3>
+        <p>Status: <strong>${r.status}</strong></p>
+        <p>Owner: ${r.owner}</p>
+        <p>Contact: <strong>${r.contact}</strong></p>
+        <p>Location: ${r.location} (within 5 km)</p>
+        <p>Next Available: ${r.nextAvailable == 0 || r.nextAvailable.toLowerCase() === 'immediately' ? 'Immediately' : r.nextAvailable + ' days'}</p>
+      `;
+      container.insertBefore(newCard, form);
+    });
+  } catch (error) {
+    console.error('Failed to load resources:', error);
+  }
+}
+
+loadResources();
+
+// Submit new resource to backend
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const resourceData = {
+    name: form.resourceName.value.trim(),
+    owner: form.ownerName.value.trim(),
+    contact: form.contactNumber.value.trim(),
+    location: form.location.value.trim(),
+    status: form.status.value,
+    nextAvailable: form.nextAvailable.value || 'Immediately'
+  };
+
+  try {
+    const res = await fetch('/api/resources', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(resourceData)
+    });
+    if (!res.ok) throw new Error('Failed to add resource');
+    await loadResources();
+    form.reset();
+  } catch (error) {
+    console.error('Error adding resource:', error);
+  }
+});
+</script>
+
+<footer>© 2025 Farmer-to-Farmer Knowledge Network 🌱</footer>
+</body>
+</html>

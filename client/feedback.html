@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback | Farmer Network</title>
+  <link rel="stylesheet" href="profile.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #a8e6a3, #eafbea);
+      margin: 0;
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+    }
+    .profile-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .profile-sidebar {
+      width: 220px;
+      background: #eef7ee;
+      padding: 28px 0 20px 0;
+      box-shadow: 2px 0 18px rgba(30,60,38,0.07);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar-logo-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .sidebar-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      margin-bottom: 7px;
+    }
+    .sidebar-name {
+      font-size: 1.27em;
+      color: #226c38;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    .sidebar-nav-link {
+      display: block;
+      padding: 15px 28px;
+      font-size: 1.13em;
+      color: #185f31;
+      text-decoration: none;
+      font-weight: 600;
+      border-left: 4px solid transparent;
+      transition: background 0.11s, border-color 0.15s;
+      margin-bottom: 4px;
+    }
+    .sidebar-nav-link:hover, .sidebar-nav-link.active {
+      background: #d2efda;
+      border-left: 4px solid #31ad47;
+      color: #145328;
+    }
+    /* Main Content */
+    .feedback-main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .feedback-container {
+      background: #ffffff;
+      padding: 35px 36px 28px 36px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.11);
+      width: 96%;
+      max-width: 480px;
+      animation: fadeIn 1.5s ease;
+      margin-top: 40px;
+      margin-bottom: 40px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      color: #219653;
+      margin-bottom: 25px;
+      font-weight: 600;
+      font-size: 26px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+      font-size: 17px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 18px;
+      font-size: 16px;
+      transition: 0.3s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #27ae60;
+      box-shadow: 0 0 8px rgba(39, 174, 96, 0.3);
+      outline: none;
+    }
+    textarea {
+      resize: none;
+    }
+    #comments {
+      height: 50px;
+    }
+    #feedback {
+      height: 100px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #27ae60;
+      color: white;
+      font-size: 17px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.4s ease;
+      box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
+    }
+    button:hover {
+      background-color: #1e8d4c;
+      box-shadow: 0 0 20px rgba(39, 174, 96, 0.7);
+      transform: scale(1.03);
+    }
+    .contact {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 15px;
+      color: #555;
+      line-height: 1.6;
+    }
+    @media (max-width: 900px) {
+      .profile-container { flex-direction: column; }
+      .profile-sidebar { flex-direction: row; width: 100vw; padding: 0 0 0 18px; }
+      .sidebar-nav { flex-direction: row; }
+      .sidebar-nav-link { padding: 11px 10px; margin-bottom: 0; }
+      .feedback-main-content { margin-top: 0; }
+    }
+    @media (max-width: 480px) {
+      h2 { font-size: 22px; }
+      label, input, select, textarea, button { font-size: 15px; }
+      .feedback-container { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <!-- Sidebar -->
+    <aside class="profile-sidebar">
+      <div class="sidebar-logo-block">
+        <img src="img.jpg" alt="Farmer Logo" class="sidebar-logo"/>
+        <span class="sidebar-name">Farmer Network</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="sidebar-nav-link"><i class="fa fa-home"></i> Home</a>
+        <a href="profile.html" class="sidebar-nav-link"><i class="fa fa-user"></i> Profile</a>
+        <a href="messages.html" class="sidebar-nav-link"><i class="fa fa-envelope"></i> Messages</a>
+        <a href="weather.html" class="sidebar-nav-link"><i class="fa fa-cloud-sun"></i> Weather</a>
+        <a href="resources.html" class="sidebar-nav-link"><i class="fa fa-book"></i> Resources</a>
+        <a href="community.html" class="sidebar-nav-link"><i class="fa fa-users"></i> Community</a>
+        <a href="tips.html" class="sidebar-nav-link"><i class="fa fa-lightbulb"></i> Tips</a>
+        <a href="Feedback.html" class="sidebar-nav-link active"><i class="fa fa-star"></i> Feedback</a>
+      </nav>
+    </aside>
+    <!-- Main feedback content -->
+    <main class="feedback-main-content">
+      <div class="feedback-container">
+        <h2>Feedback Form</h2>
+        <form id="feedbackForm">
+          <label for="name">Name:</label>
+          <input type="text" id="name" placeholder="Enter your name" required>
+
+          <label for="mobile">Mobile No:</label>
+          <input type="tel" id="mobile" placeholder="Enter your number" pattern="[0-9]{10}" required>
+
+          <label for="rating">Rate (out of 5):</label>
+          <select id="rating" required>
+            <option value="">Select</option>
+            <option value="1">1 ⭐</option>
+            <option value="2">2 ⭐⭐</option>
+            <option value="3">3 ⭐⭐⭐</option>
+            <option value="4">4 ⭐⭐⭐⭐</option>
+            <option value="5">5 ⭐⭐⭐⭐⭐</option>
+          </select>
+
+          <label for="comments">Any comments:</label>
+          <textarea id="comments" placeholder="Enter any short comments..."></textarea>
+
+          <label for="feedback">Write your feedback:</label>
+          <textarea id="feedback" placeholder="Write your detailed feedback here..." required></textarea>
+
+          <button type="submit">Submit</button>
+        </form>
+        <div class="contact">
+          <p>Helpline: +91 98765 43210</p>
+          <p>Email: support@example.com</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      alert('✅ Successfully Submitted!');
+      this.reset();
+    });
+  </script>
+</body>
+</html>

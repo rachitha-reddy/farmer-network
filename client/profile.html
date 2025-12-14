@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile | Farmer Network</title>
+  <link rel="stylesheet" href="profile.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    /* FAB + modal styles unchanged */
+    .post-fab {
+      position: fixed;
+      z-index: 120;
+      right: 38px;
+      bottom: 36px;
+      width: 59px;
+      height: 59px;
+      border-radius: 50%;
+      background: #39a653;
+      color: #fff;
+      border: none;
+      font-size: 2.4em;
+      box-shadow: 0 8px 28px #84e4a855;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s;
+    }
+    .post-fab:hover {
+      background: #23784d;
+    }
+    .upload-modal {
+      display: none;
+      position: fixed;
+      z-index: 200;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(49, 111, 73, 0.13);
+      align-items: center;
+      justify-content: center;
+    }
+    .upload-modal-content {
+      background: #fff;
+      border-radius: 17px;
+      box-shadow: 0 2px 22px #226d3140;
+      padding: 42px 36px 38px 36px;
+      min-width: 350px;
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      align-items: center;
+      position: relative;
+    }
+    .close-upload-modal {
+      position: absolute;
+      right: 18px;
+      top: 12px;
+      font-size: 1.7em;
+      color: #c7ccc6;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .upload-btn {
+      background: #38a653;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 12px 34px;
+      font-size: 1.12em;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: background 0.2s;
+    }
+    .upload-btn:hover { background: #209231; }
+    .caption-label {
+      font-size: 1.05em;
+      color: #267135;
+      font-weight: 700;
+      align-self: flex-start;
+      margin-bottom: 4px;
+      margin-left: 2px;
+    }
+    .caption-input {
+      width: 100%;
+      min-height: 58px;
+      font-size: 1.15em;
+      border-radius: 9px;
+      border: 1.5px solid #b7e2c3;
+      outline: none;
+      resize: vertical;
+      padding: 13px 10px;
+      margin-bottom: 5px;
+    }
+    .caption-input:focus { border-color: #38a653; }
+    .preview-img {
+      max-width: 180px;
+      max-height: 100px;
+      margin: 7px 0;
+      border-radius: 6px;
+      box-shadow: 0 1px 7px #79c3aa38;
+      display: block;
+    }
+    .profile-posts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      margin-top: 26px;
+    }
+    .profile-post-item {
+      background: #fff;
+      border: 1.3px solid #dbeee0;
+      border-radius: 11px;
+      box-shadow: 0 1px 7px #79c3aa38;
+      padding: 12px 15px 18px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: box-shadow .15s;
+    }
+    .profile-post-item:hover {
+      box-shadow: 0 2px 16px #137a455a;
+    }
+    .profile-post-img {
+      max-width: 100%;
+      max-height: 140px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .profile-post-caption {
+      color: #227539;
+      font-size: 1em;
+      font-weight: 500;
+      margin-top: 3px;
+      text-align: center;
+      word-break: break-word;
+    }
+    /* Post popup modal same as homepage */
+    .modal-post-bg {
+      display: none;
+      position: fixed;
+      z-index: 300;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      align-items: center;
+      justify-content: center;
+      background: rgba(16,40,18,0.14);
+    }
+    .modal-post-content {
+      background: #fff;
+      border-radius: 11px;
+      box-shadow: 0 4px 22px #236d3444;
+      max-width: 750px;
+      width: 97vw;
+      padding: 35px 30px 27px 33px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn .16s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(22px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .close-modal-post {
+      position: absolute;
+      right: 19px; top: 11px;
+      font-size: 2.2em;
+      color: #90ad99;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 6;
+    }
+    .modal-user-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 11px;
+    }
+    .modal-avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 2.5px solid #2f8f3a;
+      object-fit: cover;
+      margin-right: 3px;
+    }
+    .modal-username {
+      font-weight: 700;
+      font-size: 1.24em;
+      color: #127042;
+    }
+    .modal-image-carousel {
+      display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+    }
+    .modal-carousel-arrow {
+      background: none;
+      border: none;
+      font-size: 2em;
+      cursor: pointer;
+      color: #156343;
+      padding: 9px 14px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    .modal-carousel-arrow:active {
+      background: #eafbe6;
+    }
+    .modal-left-arrow { margin-right: 18px; }
+    .modal-right-arrow { margin-left: 18px; }
+    .modal-post-img {
+      width: 100%;
+      max-width: 390px;
+      max-height: 320px;
+      border-radius: 0px;
+      border: 1.5px solid #dbe9d4;
+      box-shadow: 0 4px 14px rgba(60,80,67,.11);
+      background: #f8faf7;
+      margin: 0 14px;
+    }
+    .modal-action-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin:18px 0 12px 0;
+      font-size: 1.27em;
+      color:#111;
+      font-weight:500;
+      user-select:none;
+    }
+    .modal-action-btn {
+      background: none;
+      border: none;
+      padding: 3px 11px 3px 1px;
+      cursor: pointer;
+      font-size: 1.27em;
+      margin-right: 2px;
+      vertical-align: middle;
+    }
+    .modal-action-bar .modal-like-count,
+    .modal-action-bar .modal-comment-count {
+      font-size:1.07em;
+      font-weight:500;
+      margin-left:4px;
+      margin-right: 18px;
+      vertical-align:middle;
+    }
+    .modal-action-bar .modal-comment-count { margin-left: 2px; }
+    .modal-action-bar .modal-like-label,
+    .modal-action-bar .modal-comment-label {
+      margin-left: 1px;
+      font-weight:500;
+      font-size:1.09em;
+      margin-right:2px;
+      vertical-align:middle;
+    }
+    .modal-post-footer-username {
+      display: block;
+      margin-top: 10px;
+      font-weight:700;
+      color:#266c17;
+      font-size:1.06em;
+      margin-bottom:3px;
+      margin-left:7px;
+    }
+    .modal-post-caption {
+      margin: 9px 0 4px 7px;
+      color: #333;
+      font-size: 1.04em;
+      word-break:break-word;
+    }
+    .modal-caption-username {
+      font-weight: 600;
+      color: #127042;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <aside class="profile-sidebar">
+      <div class="sidebar-logo-block">
+        <img src="img.jpg" alt="Farmer Logo" class="sidebar-logo"/>
+        <span class="sidebar-name">Farmer Network</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="sidebar-nav-link"><i class="fa fa-home"></i> Home</a>
+        <a href="profile.html" class="sidebar-nav-link active"><i class="fa fa-user"></i> Profile</a>
+        <a href="messages.html" class="sidebar-nav-link"><i class="fa fa-envelope"></i>Messages</a>
+        <a href="weather.html" class="sidebar-nav-link"><i class="fa fa-cloud-sun"></i> Weather</a>
+        <a href="resources.html" class="sidebar-nav-link"><i class="fa fa-book"></i> Resources</a>
+        <a href="community.html" class="sidebar-nav-link"><i class="fa fa-users"></i> Community</a>
+        <a href="tips.html" class="sidebar-nav-link"><i class="fa fa-lightbulb"></i> Tips</a>
+        <a href="Feedback.html" class="sidebar-nav-link"><i class="fa fa-star"></i> Feedback</a>
+      </nav>
+    </aside>
+    <main class="profile-main-content">
+      <div class="profile-header">
+        <div class="profile-main">
+          <div class="profile-pic-block">
+            <img src="img4.jpeg" alt="Profile Pic" class="profile-pic" id="profilePic"/>
+            <span class="profile-addpic" title="Upload new photo"><i class="fa-solid fa-plus"></i></span>
+          </div>
+          <div class="profile-info-block">
+            <h2 class="profile-username">Nature_raj</h2>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <span class="profile-stat-num">4</span>
+                <span class="profile-stat-label">Posts</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat-num">71</span>
+                <span class="profile-stat-label">Followers</span>
+              </div>
+              <div class="profile-stat">
+                <span class="profile-stat-num">72</span>
+                <span class="profile-stat-label">Following</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="profile-edit-btn">EDIT</button>
+      </div>
+      <div class="profile-tabs">
+        <span class="profile-tab active" id="postsTab">Posts</span>
+      </div>
+      <div class="profile-posts-grid" id="profilePostsGrid">
+        <!-- Sample posts inserted here -->
+      </div>
+    </main>
+  </div>
+  <button class="post-fab" id="openUploadModal" title="Add new post">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+  <div class="upload-modal" id="uploadModal">
+    <div class="upload-modal-content">
+      <button class="close-upload-modal" id="closeUploadModal" title="Close">&times;</button>
+      <label class="upload-btn">
+        Upload posts
+        <input type="file" id="uploadFiles" accept="image/*,video/*" multiple style="display:none"/>
+      </label>
+      <label class="caption-label" for="captionInput">Caption</label>
+      <textarea class="caption-input" id="captionInput" placeholder="Enter caption here..."></textarea>
+      <div id="uploadPreview"></div>
+      <button id="addPostBtn" class="upload-btn" style="margin-top:9px;">Add Post</button>
+    </div>
+  </div>
+  <div class="modal-post-bg" id="modalPostBg">
+    <div class="modal-post-content" id="modalPostContent"></div>
+  </div>
+  <div class="modal-comment-popup" id="modalCommentBg">
+    <div class="modal-comment-content">
+      <button class="close-modal-comment" id="closeModalComment" title="Close">&times;</button>
+      <ul class="modal-comment-list" id="modalCommentList"></ul>
+    </div>
+  </div>
+  <div class="modal" id="profilePicModal">
+    <div class="profile-pic-modal-content">
+      <span class="close-modal">&times;</span>
+      <img src="img4.jpeg" alt="Enlarged Profile Pic" class="modal-profile-pic"/>
+    </div>
+  </div>
+  <script>
+    const samplePosts = [
+      {
+        images: ["https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1171","https://images.unsplash.com/photo-1656826605781-fcd6c13b0bd5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170"],
+        videos: [],
+        caption: "A Regular day in the farm life.",
+        username: "nature_raj",
+        avatar: "img4.jpeg"
+      },
+      {
+        images: ["https://media.istockphoto.com/id/601122142/photo/crop-of-sun-kissed-mango-fruit-ripening-on-tree.jpg?s=1024x1024&w=is&k=20&c=b5LJ7YMSR_z9LGsC6s1bD48YKFuwRUTliq4lSUgp7Rc="],
+        videos: [],
+        caption: "Fresh Mangos in my farm this season!",
+        username: "nature_raj",
+        avatar: "img4.jpeg"
+      },
+      {
+        images: ["https://media.istockphoto.com/id/806252534/photo/indian-woman-farmer-planting-rice-seedlings-in-the-rice-paddy-field.jpg?s=1024x1024&w=is&k=20&c=_2sR9yB39oYzqglN7ehIp8V-DpNMXGMalYOf0Bka2Ek="],
+        videos: [],
+        caption: "Planting fresh crops.",
+        username: "nature_raj",
+        avatar: "img4.jpeg"
+      },
+      {
+        images: ["https://plus.unsplash.com/premium_photo-1661811847476-3ea28469f856?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=907"],
+        videos: [],
+        caption: "The Harvesting season is here!",
+        username: "nature_raj",
+        avatar: "img4.jpeg"
+      }
+    ];
+
+    const profilePostsGrid = document.getElementById('profilePostsGrid');
+
+    // Function to create a post item element
+    function createPostItem(post) {
+      const item = document.createElement('div');
+      item.className = 'profile-post-item';
+      let imgOrVideo;
+
+      if (post.images.length) {
+        imgOrVideo = document.createElement('img');
+        imgOrVideo.src = post.images[0];
+        imgOrVideo.className = 'profile-post-img';
+        item.appendChild(imgOrVideo);
+      } else if (post.videos.length) {
+        imgOrVideo = document.createElement('div');
+        imgOrVideo.textContent = `📹 ${post.videos[0]}`;
+        imgOrVideo.style = 'margin-bottom:10px;font-size:1.19em;color:#388642;word-break:break-all;';
+        item.appendChild(imgOrVideo);
+      }
+      const caption = document.createElement('div');
+      caption.className = 'profile-post-caption';
+      caption.textContent = post.caption;
+      item.appendChild(caption);
+
+      item.dataset.post = JSON.stringify(post);
+
+      item.onclick = showPostModal;
+      return item;
+    }
+
+    // Insert sample posts on page load
+    samplePosts.forEach(p => {
+      const postItem = createPostItem(p);
+      profilePostsGrid.appendChild(postItem);
+    });
+
+    // Upload post modal functionality remains same as your code
+    const openUploadModal = document.getElementById('openUploadModal');
+    const uploadModal = document.getElementById('uploadModal');
+    const closeUploadModal = document.getElementById('closeUploadModal');
+    const uploadFiles = document.getElementById('uploadFiles');
+    const addPostBtn = document.getElementById('addPostBtn');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const captionInput = document.getElementById('captionInput');
+    let filesToUpload = [];
+
+    openUploadModal.onclick = () => { uploadModal.style.display = 'flex'; }
+    closeUploadModal.onclick = () => {
+      uploadModal.style.display = 'none';
+      uploadPreview.innerHTML = '';
+      filesToUpload = [];
+      captionInput.value = '';
+    }
+    window.onclick = e => {
+      if (e.target === uploadModal) closeUploadModal.onclick();
+      if (e.target === document.getElementById('modalPostBg')) closePostModal();
+      if (e.target === document.getElementById('modalCommentBg')) closeCommentModal();
+    }
+
+    document.querySelector('.upload-btn input[type="file"]').onchange = function(e) {
+      filesToUpload = Array.from(this.files);
+      uploadPreview.innerHTML = '';
+      filesToUpload.forEach(f => {
+        if (f.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.className = 'preview-img';
+          img.src = URL.createObjectURL(f);
+          uploadPreview.appendChild(img);
+        } else {
+          const div = document.createElement('div');
+          div.textContent = `📹 ${f.name}`;
+          div.style = 'margin:5px 0;color:#1c6f3d;font-weight:600;';
+          uploadPreview.appendChild(div);
+        }
+      });
+    };
+
+    addPostBtn.onclick = function() {
+      if (!filesToUpload.length && !captionInput.value.trim()) return;
+      const postObj = {
+        images: filesToUpload.filter(f => f.type.startsWith('image/')).map(f => URL.createObjectURL(f)),
+        videos: filesToUpload.filter(f => f.type.startsWith('video/')).map(f => f.name),
+        caption: captionInput.value.trim(),
+        username: "You", // Or logged in user name
+        avatar: ""
+      };
+      const item = createPostItem(postObj);
+      profilePostsGrid.prepend(item);
+      closeUploadModal.onclick();
+    };
+
+    // Post popup modal logic
+    function showPostModal() {
+      const post = JSON.parse(this.dataset.post);
+      const modalBg = document.getElementById('modalPostBg');
+      const modal = document.getElementById('modalPostContent');
+      let currentIdx = 0;
+      function render() {
+        modal.innerHTML = `
+          <button class="close-modal-post" id="closeModalPost" title="Close">&times;</button>
+          <div class="modal-user-row">
+            <img class="modal-avatar" src="${post.avatar || 'img2.jpg'}" alt="User photo"/>
+            <span class="modal-username">${post.username || 'User'}</span>
+          </div>
+          <div class="modal-image-carousel">
+            <button class="modal-carousel-arrow modal-left-arrow" id="modalPrevImgBtn">&#8592;</button>
+            ${post.images && post.images.length ? 
+              `<img id="modalPostImage" class="modal-post-img" src="${post.images[currentIdx]}" alt="Post Image"/>` :
+              post.videos && post.videos.length ?
+              `<div style="margin:0 18px;font-size:2em;color:#1a8437;">📹 ${post.videos[0]}</div>` : ''
+            }
+            <button class="modal-carousel-arrow modal-right-arrow" id="modalNextImgBtn">&#8594;</button>
+          </div>
+          <div class="modal-action-bar">
+            <button class="modal-action-btn" id="modalLikeBtn" title="Like"><span id="modalLikeIcon">🤍</span></button>
+            <span class="modal-like-label">Like</span>
+            <span class="modal-like-count" id="modalLikeCount">(10)</span>
+            <button class="modal-action-btn" id="modalCommentBtn" title="Comment"><span>💬</span></button>
+            <span class="modal-comment-label">Comment</span>
+            <span class="modal-comment-count" id="modalCommentCount">(4)</span>
+          </div>
+          <div class="modal-post-footer-username">${post.username || 'User'}</div>
+          <div class="modal-post-caption"><span class="modal-caption-username">${post.username || 'User'}</span> 
+            ${post.caption || ''}</div>
+        `;
+        document.getElementById('closeModalPost').onclick = closePostModal;
+        if(post.images && post.images.length > 1){
+          document.getElementById('modalPrevImgBtn').onclick = function(){
+            currentIdx = (currentIdx - 1 + post.images.length) % post.images.length;
+            render();
+          }
+          document.getElementById('modalNextImgBtn').onclick = function(){
+            currentIdx = (currentIdx + 1) % post.images.length;
+            render();
+          }
+        } else {
+          document.getElementById('modalPrevImgBtn').style.display = 'none';
+          document.getElementById('modalNextImgBtn').style.display = 'none';
+        }
+        let modalLiked = false, modalLikeCount = 10;
+        document.getElementById('modalLikeBtn').onclick = function(){
+          modalLiked = !modalLiked;
+          document.getElementById('modalLikeIcon').textContent = modalLiked ? "❤️" : "🤍";
+          document.getElementById('modalLikeCount').textContent = modalLiked ? `(${modalLikeCount+1})` : `(${modalLikeCount})`;
+        }
+        document.getElementById('modalCommentBtn').onclick = openCommentModal;
+      }
+      render();
+      modalBg.style.display = 'flex';
+    }
+    function closePostModal(){
+      document.getElementById('modalPostBg').style.display = 'none';
+    }
+    // Comment modal logic
+    function openCommentModal(){
+      document.getElementById('modalCommentBg').style.display = 'flex';
+      document.getElementById('modalCommentList').innerHTML = `
+        <li><span class="modal-comment-username">nature_raj</span> Nice post!</li>
+        <li><span class="modal-comment-username">green_field</span> Awesome snap.</li>
+        <li><span class="modal-comment-username">sunlover</span> 👏👏😍</li>
+      `;
+    }
+    function closeCommentModal(){
+      document.getElementById('modalCommentBg').style.display = 'none';
+    }
+    document.getElementById('closeModalComment').onclick = closeCommentModal;
+  </script>
+</body>
+</html>

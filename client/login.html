@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login / Signup | Farmer Network</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background-color: #e8f5e9;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #1b5e20;
+    }
+    .site-header {
+      background: #38a653;
+      padding: 0;
+    }
+    .container.header-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-left: 96px;
+      padding-right: 96px;
+      max-width: 100vw;
+    }
+    .brand-left {
+      display: flex;
+      align-items: center;
+    }
+    .logo {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      margin-right: 14px;
+    }
+    .brand-left h1 {
+      font-size: 2em;
+      color: #fff;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    .nav {
+      display: flex;
+      gap: 28px;
+    }
+    .nav a {
+      font-weight: 700;
+      font-size: 1.17em;
+      color: #fff;
+      text-decoration: none;
+      transition: border-bottom 0.18s;
+      padding: 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav a.active, .nav a:hover {
+      border-bottom: 3px solid #e3f1de;
+      color: #e0faea;
+    }
+    /* Rest is the login/signup container styles */
+    .auth-container {
+      background: #fff;
+      border-radius: 14px;
+      padding: 36px 48px;
+      box-shadow: 0 5px 24px rgba(14,53,16,0.15);
+      max-width: 420px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      margin: 40px auto 80px auto;
+      flex-grow: 1;
+    }
+    .auth-header {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 28px;
+      color: #2e7d32;
+      letter-spacing: 0.5px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      font-size: 1.05em;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: 1.8px solid #b7e2c3;
+      font-size: 1.12em;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #38a653;
+      box-shadow: 0 0 8px #38a653aa;
+    }
+    .btn-primary {
+      background-color: #38a653;
+      border: none;
+      color: white;
+      font-size: 1.17em;
+      font-weight: 700;
+      padding: 14px 0;
+      width: 100%;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #287d37;
+    }
+    .toggle-link {
+      margin-top: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #1b5e20;
+      display: block;
+      user-select: none;
+    }
+    .toggle-link:hover {
+      text-decoration: underline;
+    }
+    .hide {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav like homepage -->
+  <header class="site-header">
+    <div class="container header-flex">
+      <div class="brand-left">
+        <img src="img.jpg" alt="Logo" class="logo" />
+        <h1>Farmer Network</h1>
+      </div>
+      <nav class="nav">
+        <a href="index.html" id="homeNav"><i class="fa fa-house"></i> Home</a>
+        <a href="profile.html" id="profileNav"><i class="fa fa-user"></i> Profile</a>
+        <a href="messages.html" id="messagesNav"><i class="fa fa-envelope"></i> Messages</a>
+        <a href="weather.html" id="weatherNav"><i class="fa fa-cloud-sun"></i> Weather</a>
+        <a href="resources.html" id="ResourceNav"><i class="fa fa-book"></i> Resources</a>
+        <a href="community.html" class="sidebar-nav-link"><i class="fa fa-users"></i> Community</a>
+        <a href="Feedback.html" id="feedbackNav"><i class="fa fa-star"></i> Feedback</a>
+        <a href="tips.html" id="tipsNav"><i class="fa fa-lightbulb"></i> Tips</a>
+        <a href="login.html" id="loginNav" class="active"><i class="fa fa-right-to-bracket"></i> Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="auth-container">
+    <div id="loginForm">
+      <div class="auth-header">Log In to Farmer Network</div>
+      <form>
+        <div class="form-group">
+          <label for="loginUsername">Username or Email</label>
+          <input type="text" id="loginUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required />
+        </div>
+        <button type="submit" class="btn-primary">Log In</button>
+      </form>
+      <span class="toggle-link" id="showSignup">Don't have an account? Sign Up</span>
+    </div>
+
+    <div id="signupForm" class="hide">
+      <div class="auth-header">Create a New Account</div>
+      <form>
+        <div class="form-group">
+          <label for="signupUsername">Username</label>
+          <input type="text" id="signupUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" required />
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" required />
+        </div>
+        <button type="submit" class="btn-primary">Sign Up</button>
+      </form>
+      <span class="toggle-link" id="showLogin">Already have an account? Log In</span>
+    </div>
+  </div>
+  
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    document.getElementById('showSignup').onclick = () => {
+      loginForm.classList.add('hide');
+      signupForm.classList.remove('hide');
+    };
+    document.getElementById('showLogin').onclick = () => {
+      signupForm.classList.add('hide');
+      loginForm.classList.remove('hide');
+    };
+  </script>
+</body>
+</html>

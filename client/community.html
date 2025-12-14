@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community | Farmer Network</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #a8e6a3, #eafbea);
+      margin: 0;
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+    }
+    .profile-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .profile-sidebar {
+      width: 220px;
+      background: #eef7ee;
+      padding: 28px 0 20px 0;
+      box-shadow: 2px 0 18px rgba(30,60,38,0.07);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar-logo-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .sidebar-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      margin-bottom: 7px;
+    }
+    .sidebar-name {
+      font-size: 1.27em;
+      color: #226c38;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    .sidebar-nav-link {
+      display: block;
+      padding: 15px 28px;
+      font-size: 1.13em;
+      color: #185f31;
+      text-decoration: none;
+      font-weight: 600;
+      border-left: 4px solid transparent;
+      transition: background 0.11s, border-color 0.15s;
+      margin-bottom: 4px;
+    }
+    .sidebar-nav-link:hover, .sidebar-nav-link.active {
+      background: #d2efda;
+      border-left: 4px solid #31ad47;
+      color: #145328;
+    }
+
+    .community-main-content {
+      flex: 1;
+      padding: 35px 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background-color: #2e7d32;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 26px;
+      font-weight: bold;
+      border-radius: 12px;
+      width: 96%;
+      max-width: 1000px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+    }
+    form {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      width: 96%;
+      max-width: 600px;
+      margin-bottom: 35px;
+    }
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+      font-size: 17px;
+    }
+    form input, form select, form textarea, form button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 18px;
+      font-size: 16px;
+      transition: 0.3s ease;
+    }
+    form input:focus, form select:focus, form textarea:focus {
+      border-color: #27ae60;
+      box-shadow: 0 0 8px rgba(39, 174, 96, 0.3);
+      outline: none;
+    }
+    form button {
+      background-color: #27ae60;
+      color: white;
+      font-size: 17px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.4s ease;
+      box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
+    }
+    form button:hover {
+      background-color: #1e8d4c;
+      box-shadow: 0 0 20px rgba(39, 174, 96, 0.7);
+      transform: scale(1.03);
+    }
+
+    .community-section {
+      width: 96%;
+      max-width: 1000px;
+    }
+    .community {
+      background-color: #ffffff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .community h3 {
+      color: #1b5e20;
+      margin-bottom: 12px;
+    }
+    .post-card {
+      background-color: #f9fbe7;
+      border-left: 5px solid #66bb6a;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    .post-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .post-card p {
+      margin: 6px 0;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: #333;
+      font-size: 15px;
+      margin-top: 20px;
+    }
+    @media (max-width: 900px) {
+      .profile-container { flex-direction: column; }
+      .profile-sidebar { flex-direction: row; width: 100vw; padding: 0 0 0 18px; }
+      .sidebar-nav { flex-direction: row; overflow-x: auto; }
+      .sidebar-nav-link { padding: 11px 10px; margin-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-container">
+    <!-- Sidebar -->
+    <aside class="profile-sidebar">
+      <div class="sidebar-logo-block">
+        <img src="img.jpg" alt="Farmer Logo" class="sidebar-logo"/>
+        <span class="sidebar-name">Farmer Network</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="sidebar-nav-link"><i class="fa fa-home"></i> Home</a>
+        <a href="profile.html" class="sidebar-nav-link"><i class="fa fa-user"></i> Profile</a>
+        <a href="messages.html" class="sidebar-nav-link"><i class="fa fa-envelope"></i> Messages</a>
+        <a href="weather.html" class="sidebar-nav-link"><i class="fa fa-cloud-sun"></i> Weather</a>
+        <a href="resources.html" class="sidebar-nav-link"><i class="fa fa-book"></i> Resources</a>
+        <a href="community.html" class="sidebar-nav-link active"><i class="fa fa-users"></i> Community</a>
+        <a href="tips.html" class="sidebar-nav-link"><i class="fa fa-lightbulb"></i> Tips</a>
+        <a href="Feedback.html" class="sidebar-nav-link"><i class="fa fa-star"></i> Feedback</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="community-main-content">
+      <header>🌾 Farmer Community Network 🌾</header>
+
+      <form id="postForm">
+        <label for="farmerName">Your Name:</label>
+        <input type="text" id="farmerName" name="farmerName" placeholder="Enter your name" required>
+
+        <label for="cropCommunity">Select Community:</label>
+        <select id="cropCommunity" name="cropCommunity" required>
+          <option value="">-- Select Crop --</option>
+          <option value="banana">Banana</option>
+          <option value="maize">Maize</option>
+          <option value="wheat">Wheat</option>
+          <option value="rice">Rice</option>
+        </select>
+
+        <label for="postContent">Describe your post:</label>
+        <textarea id="postContent" name="postContent" rows="3" placeholder="Share your experience, query, or observation..." required></textarea>
+
+        <label for="cropImage">Upload Crop Image:</label>
+        <input type="file" id="cropImage" name="cropImage" accept="image/*" required>
+
+        <button type="submit">Post</button>
+      </form>
+
+      <div class="community-section">
+        <div id="banana" class="community">
+          <h3>🍌 Banana Community</h3>
+          <div class="posts"></div>
+        </div>
+
+        <div id="maize" class="community">
+          <h3>🌽 Maize Community</h3>
+          <div class="posts"></div>
+        </div>
+
+        <div id="wheat" class="community">
+          <h3>🌾 Wheat Community</h3>
+          <div class="posts"></div>
+        </div>
+
+        <div id="rice" class="community">
+          <h3>🍚 Rice Community</h3>
+          <div class="posts"></div>
+        </div>
+      </div>
+
+      <footer>© 2025 Farmer-to-Farmer Knowledge Network 🌱</footer>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById('postForm');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('farmerName').value.trim();
+      const crop = document.getElementById('cropCommunity').value;
+      const content = document.getElementById('postContent').value.trim();
+      const imageInput = document.getElementById('cropImage');
+
+      if (!crop) {
+        alert('Please select a community to post in.');
+        return;
+      }
+
+      const file = imageInput.files[0];
+      if (!file) {
+        alert('Please upload an image.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const imageUrl = event.target.result;
+
+        const post = document.createElement('div');
+        post.classList.add('post-card');
+        post.innerHTML = `
+          <p><strong>${name}</strong> posted:</p>
+          <p>${content}</p>
+          <img src="${imageUrl}" alt="Crop Image">
+          <small><em>Posted in ${crop.charAt(0).toUpperCase() + crop.slice(1)} Community</em></small>
+        `;
+
+        document.querySelector("#" + crop + " .posts").prepend(post);
+      };
+
+      reader.readAsDataURL(file);
+      form.reset();
+    });
+  </script>
+
+</body>
+</html>
