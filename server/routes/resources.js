@@ -1,41 +1,42 @@
+const express = require('express');
+const router = express.Router();
+const Resource = require('../models/Resource');
+const authMiddleware = require('../middleware/auth');
 
-
-async function loadResources() {
+// GET /api/resources - Get all resources (public)
+router.get('/', async (req, res) => {
   try {
-    const res = await fetch('/api/resources');
-    const resources = await res.json();
-
-    const container = document.querySelector('.container');
-    // Clear or manage existing resource cards here
-    // For simplicity, just console log for now
-    console.log(resources);
+    const resources = await Resource.find().sort({ createdAt: -1 });
+    res.json({ resources });
   } catch (err) {
-    console.error('Failed to load resources:', err);
+    res.status(500).json({ error: err.message });
   }
-}
-loadResources();
-async function addResource(resourceData) {
-  try {
-    const response = await fetch('/api/resources', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(resourceData)
-    });
-    if (!response.ok) throw new Error('Failed to add resource');
-    const newResource = await response.json();
-    console.log('Resource added:', newResource);
-    // Optionally update UI or reload resource list
-  } catch (error) {
-    console.error('Error adding resource:', error);
-  }
-}
+});
 
-// Example usage:
-// addResource({
-//   name: 'New Tractor',
-//   owner: 'John Doe',
-//   contact: '9998887776',
-//   location: 'Village X',
-//   status: 'Available',
-//   nextAvailable: 'Immediately'
-// });
+// POST /api/resources - Create a new resource (protected)
+router.post('/', authMiddleware, async (req, res) => {
+  try {
+    const { name, status, owner, contact, location, nextAvailable } = req.body;
+    
+    // Validate all required fields
+    if (!name || !status || !owner || !contact || !location || !nextAvailable) {
+      return res.status(400).json({ error: 'All fields are required: name, status, owner, contact, location, nextAvailable' });
+    }
+
+    const resource = await Resource.create({
+      name,
+      status,
+      owner,
+      contact,
+      location,
+      nextAvailable,
+      createdBy: req.user.userId
+    });
+
+    res.status(201).json({ resource });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
