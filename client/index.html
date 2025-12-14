@@ -260,6 +260,17 @@
     .search-suggestions-list li:hover {
       background: #f0f9ed;
     }
+    .post-community-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #38a653;
+      color: #fff;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: capitalize;
+    }
   </style>
 </head>
 <body>
@@ -283,156 +294,394 @@
     </div>
   </header>
   <div class="container main-grid">
-    <div class="left-col">
-      <div class="centered-search-bar">
-        <div class="search-user-bar">
-          <input
-            type="text"
-            id="userSearchInput"
-            placeholder="Search users by username..."
-            autocomplete="off"
-          />
-          <ul id="searchSuggestions" class="search-suggestions-list"></ul>
-        </div>
-      </div>
-      <div class="sample-post">
-        <div class="user-row">
-          <img class="avatar" src="img4.jpeg" alt="User photo"/>
-          <span class="username">nature_raj</span>
-        </div>
-        <div class="image-carousel">
-          <button class="carousel-arrow left-arrow" id="prevImgBtn">&#8592;</button>
-          <img 
-            id="postImage"
-            src="img3.jpeg" 
-            alt="Post 1"
-          />
-          <button class="carousel-arrow right-arrow" id="nextImgBtn">&#8594;</button>
-        </div>
-        <div class="action-bar">
-          <button class="action-btn" id="likeBtn" title="Like">
-            <span id="likeIcon">🤍</span>
-          </button>
-          <span class="like-label">Like</span>
-          <span class="like-count" id="likeCount">(10)</span>
-          <button class="action-btn" id="commentBtn" title="Comment"><span>💬</span></button>
-          <span class="comment-label">Comment</span>
-          <span class="comment-count" id="commentCount">(4)</span>
-        </div>
-        <div class="post-footer-username">nature_raj</div>
-        <div class="post-caption"><span class="caption-username">nature_raj</span> Exploring the beauty of the valley at dusk. Nature truly heals the soul!</div>
+  <div class="left-col">
+    <div class="centered-search-bar">
+      <div class="search-user-bar">
+        <input type="text" id="userSearchInput" autocomplete="off" />
+        <ul id="searchSuggestions" class="search-suggestions-list"></ul>
       </div>
     </div>
-    <div class="right-col">
-      <div class="suggestions-widget">
-        <h2>Suggestions</h2>
-        <ul id="suggestionsList">
-          <li>@nature_raj</li>
-          <li>@green_field</li>
-          <li>@sunlover</li>
-          <li>@travelbuddy</li>
-          <li>@praveena_farmer</li>
-        </ul>
-      </div>
+    
+
+    <!-- Posts container - posts will be dynamically inserted here -->
+    <div id="postsContainer"></div>
+  </div>
+
+  <!-- Right column stays exactly as before -->
+  <div class="right-col">
+    <div class="suggestions-widget">
+      <h2>Suggestions</h2>
+      <ul id="suggestionsList">
+        <!-- Suggestions will be loaded from backend -->
+      </ul>
     </div>
+  </div>
+</div>
+  
   </div>
   <footer class="footer">
     <p>&copy; 2025 NovaTech | Helpline: +1234567890 | Email: support@novatech.com</p>
   </footer>
   <script>
-    const API_BASE_URL = 'https://your-app.onrender.com/api';
+    const API_BASE_URL = 'http://localhost:4000';
+    
+    // Check authentication
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+    
+    // Helper function to get auth headers
+    function getAuthHeaders() {
+      const token = localStorage.getItem('token');
+      return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+    }
+    
+    // Logout functionality
+    function setupLogout() {
+      const loginNav = document.getElementById('loginNav');
+      if (loginNav) {
+        const username = localStorage.getItem('username') || 'User';
+        loginNav.innerHTML = `<i class="fa fa-right-to-bracket"></i> Logout (${username})`;
+        loginNav.onclick = (e) => {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('fullName');
+          localStorage.removeItem('avatarUrl');
+          window.location.href = 'login.html';
+        };
+      }
+    }
+    setupLogout();
 
-// Example: Fetch posts and display
-    async function loadPosts() {
-    try {
-        const res = await fetch(`${API_BASE_URL}/posts`);
+    // Placeholder image URL for posts without images
+    // TODO: Replace with actual file upload integration
+    const PLACEHOLDER_IMAGE_URL = 'https://via.placeholder.com/600x400?text=No+Image';
+
+    // Fetch posts and display (home feed - only followed users)
+    async function loadPosts(communityFilter = '') {
+      try {
+        // Home feed uses /api/posts/feed to show only followed users' posts
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/posts/feed`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        if (!res.ok) {
+          throw new Error('Failed to load posts');
+        }
+        
         const data = await res.json();
-        // replace sample post HTML with dynamic rendering using data.posts
-    } catch (e) {
+        const posts = data.posts || [];
+        
+        // Clear existing posts container
+        const postsContainer = document.getElementById('postsContainer');
+        postsContainer.innerHTML = '';
+        
+        if (posts.length === 0) {
+          postsContainer.innerHTML = '<p style="text-align: center; color: #666; font-size: 1.2em; padding: 40px;">No posts yet. Follow some users to see their posts!</p>';
+          return;
+        }
+        
+        // Render each post
+        posts.forEach((post, index) => {
+          renderPost(post, index);
+        });
+      } catch (e) {
         console.error('Error loading posts', e);
+        const postsContainer = document.getElementById('postsContainer');
+        postsContainer.innerHTML = '<p style="text-align: center; color: #d32f2f; font-size: 1.2em; padding: 40px;">Failed to load posts. Please try again.</p>';
+      }
     }
-    }
-    loadPosts();
 
-    // Like and comment toggle logic
-    let liked = false;
-    let likeCount = 10;
-    const likeBtn = document.getElementById('likeBtn');
-    const likeIcon = document.getElementById('likeIcon');
-    const likeCountSpan = document.getElementById('likeCount');
-    likeBtn.onclick = function() {
-      liked = !liked;
-      likeIcon.textContent = liked ? "❤️" : "🤍";
-      likeCountSpan.textContent = liked ? `(${likeCount+1})` : `(${likeCount})`;
-    };
-    // Carousel Logic
-    const imageUrls = [
-      "img3.jpeg",
-      "img5.jpeg",
-    ];
-    let currentImgIndex = 0;
-    const postImage = document.getElementById('postImage');
-    const prevImgBtn = document.getElementById('prevImgBtn');
-    const nextImgBtn = document.getElementById('nextImgBtn');
-    function updateImage() {
-      postImage.src = imageUrls[currentImgIndex];
+    // Render a single post
+    function renderPost(post, index) {
+      const postsContainer = document.getElementById('postsContainer');
+      const postDiv = document.createElement('div');
+      postDiv.className = 'sample-post';
+      postDiv.id = `post-${index}`;
+      
+      // Build image URLs (prepend API_BASE_URL if relative, use placeholder if empty)
+      const images = post.images && post.images.length > 0 
+        ? post.images.map(img => img.startsWith('http') ? img : API_BASE_URL + img)
+        : [PLACEHOLDER_IMAGE_URL];
+      let currentImgIndex = 0;
+      
+      // Build image URLs (prepend API_BASE_URL if relative)
+      const imageUrls = images.map(img => img.startsWith('http') ? img : API_BASE_URL + img);
+      
+      // Check if current user owns this post
+      const currentUsername = localStorage.getItem('username');
+      const isOwner = post.username === currentUsername;
+      const deleteButton = isOwner ? `<button class="delete-post-btn" id="deleteBtn-${index}" title="Delete post" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: auto; font-size: 0.9em;">🗑️ Delete</button>` : '';
+      
+      // Store post ID for deletion
+      postDiv.dataset.postId = post._id || post.id;
+      
+      postDiv.innerHTML = `
+        <div class="user-row" style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" class="user-profile-link" data-username="${post.username || ''}">
+            <img class="avatar" src="${post.avatarUrl ? (post.avatarUrl.startsWith('http') ? post.avatarUrl : API_BASE_URL + post.avatarUrl) : ''}" alt="User photo" />
+            <span class="username">${post.username || ''}</span>
+          </div>
+          ${deleteButton}
+        </div>
+        ${post.community ? `<div class="post-community-badge">${post.community}</div>` : ''}
+        <div class="image-carousel">
+          <button class="carousel-arrow left-arrow" id="prevImgBtn-${index}">&#8592;</button>
+          <img id="postImage-${index}" src="${imageUrls[currentImgIndex]}" alt="Post image" />
+          <button class="carousel-arrow right-arrow" id="nextImgBtn-${index}">&#8594;</button>
+        </div>
+        <div class="action-bar">
+          <button class="action-btn" id="likeBtn-${index}" title="Like">
+            <span id="likeIcon-${index}">🤍</span>
+          </button>
+          <span class="like-label">Like</span>
+          <span class="like-count" id="likeCount-${index}">(0)</span>
+          <button class="action-btn" id="commentBtn-${index}" title="Comments">
+            <span>💬</span>
+          </button>
+          <span class="comment-label">Comment</span>
+          <span class="comment-count" id="commentCount-${index}">(0)</span>
+        </div>
+        <div class="post-footer">
+          <div class="post-footer-username user-profile-link" data-username="${post.username || ''}" style="cursor: pointer;">${post.username || ''}</div>
+          <div class="post-caption">
+            <span class="caption-username user-profile-link" data-username="${post.username || ''}" style="cursor: pointer;">${post.username || ''}</span>
+            <span class="caption-text">${post.caption || ''}</span>
+          </div>
+        </div>
+      `;
+      
+      // Store post ID for deletion
+      postDiv.dataset.postId = post._id;
+      
+      postsContainer.appendChild(postDiv);
+      
+      // Add click handlers for profile links
+      const profileLinks = postDiv.querySelectorAll('.user-profile-link');
+      profileLinks.forEach(link => {
+        link.onclick = (e) => {
+          e.stopPropagation(); // Prevent any parent click handlers
+          const username = link.dataset.username;
+          if (username) {
+            window.location.href = `profile.html?user=${encodeURIComponent(username)}`;
+          }
+        };
+      });
+      
+      // Setup carousel for this post if multiple images
+      if (imageUrls.length > 1) {
+        const prevBtn = document.getElementById(`prevImgBtn-${index}`);
+        const nextBtn = document.getElementById(`nextImgBtn-${index}`);
+        const postImg = document.getElementById(`postImage-${index}`);
+        
+        prevBtn.onclick = function() {
+          currentImgIndex = (currentImgIndex - 1 + imageUrls.length) % imageUrls.length;
+          postImg.src = imageUrls[currentImgIndex];
+        };
+        
+        nextBtn.onclick = function() {
+          currentImgIndex = (currentImgIndex + 1) % imageUrls.length;
+          postImg.src = imageUrls[currentImgIndex];
+        };
+      } else {
+        // Hide arrows if only one image
+        document.getElementById(`prevImgBtn-${index}`).style.display = 'none';
+        document.getElementById(`nextImgBtn-${index}`).style.display = 'none';
+      }
+      
+      // Setup like button
+      let liked = false;
+      const likeBtn = document.getElementById(`likeBtn-${index}`);
+      const likeIcon = document.getElementById(`likeIcon-${index}`);
+      const likeCountSpan = document.getElementById(`likeCount-${index}`);
+      likeBtn.onclick = function() {
+        liked = !liked;
+        likeIcon.textContent = liked ? "❤️" : "🤍";
+        const currentCount = parseInt(likeCountSpan.textContent.match(/\d+/)?.[0] || 0);
+        likeCountSpan.textContent = liked ? `(${currentCount + 1})` : `(${currentCount})`;
+      };
+      
+      // Setup delete button if it exists (only for owner)
+      if (isOwner) {
+        const deleteBtn = document.getElementById(`deleteBtn-${index}`);
+        if (deleteBtn) {
+          deleteBtn.onclick = async function() {
+            if (!confirm('Are you sure you want to delete this post?')) {
+              return;
+            }
+            
+            try {
+              const postId = postDiv.dataset.postId;
+              if (!postId) {
+                alert('Post ID not found');
+                return;
+              }
+              
+              const token = localStorage.getItem('token');
+              const res = await fetch(`${API_BASE_URL}/api/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+              
+              if (res.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+                return;
+              }
+              
+              if (!res.ok) {
+                const error = await res.json();
+                alert('Failed to delete post: ' + (error.error || 'Unknown error'));
+                return;
+              }
+              
+              // Remove post from DOM
+              postDiv.remove();
+              
+              // Reload posts to refresh the feed
+              loadPosts();
+            } catch (err) {
+              console.error('Error deleting post:', err);
+              alert('Failed to delete post. Please try again.');
+            }
+          };
+        }
+      }
     }
-    prevImgBtn.onclick = function() {
-      currentImgIndex = (currentImgIndex - 1 + imageUrls.length) % imageUrls.length;
-      updateImage();
-    };
-    nextImgBtn.onclick = function() {
-      currentImgIndex = (currentImgIndex + 1) % imageUrls.length;
-      updateImage();
-    };
-    // Comment Modal logic
-    const commentBtn = document.getElementById('commentBtn');
-    const commentModal = document.getElementById('commentModal');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    commentBtn.onclick = function() {
-      commentModal.style.display = 'flex';
-    };
-    closeModalBtn.onclick = function() {
-      commentModal.style.display = 'none';
-    };
-    window.onclick = function(event) {
-      if(event.target == commentModal) commentModal.style.display = 'none';
+
+    // Load posts on page load
+    loadPosts();
+    
+    // Note: Community filter removed from home page - home feed shows only followed users' posts
+
+    // Load suggestions on page load
+    async function loadSuggestions() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/users/suggestions`, {
+          headers: getAuthHeaders()
+        });
+        
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        if (!res.ok) {
+          throw new Error('Failed to load suggestions');
+        }
+        
+        const data = await res.json();
+        const users = data.users || [];
+        const suggestionsList = document.getElementById('suggestionsList');
+        suggestionsList.innerHTML = '';
+        
+        users.forEach(user => {
+          const li = document.createElement('li');
+          const displayName = user.fullName || user.username;
+          li.textContent = displayName;
+          li.style.cursor = 'pointer';
+          li.onclick = () => {
+            // Navigate to profile or start conversation
+            window.location.href = `profile.html?user=${user.username}`;
+          };
+          suggestionsList.appendChild(li);
+        });
+      } catch (err) {
+        console.error('Error loading suggestions:', err);
+      }
     }
-    // User search bar logic
-    const knownUsers = [
-      "@nature_raj",
-      "@green_field",
-      "@sunlover",
-      "@travelbuddy",
-      "@praveena_farmer"
-    ];
+    
+    loadSuggestions();
+
+    // User search bar logic - searches all users
     const userSearchInput = document.getElementById('userSearchInput');
     const searchSuggestions = document.getElementById('searchSuggestions');
+    let searchTimeout = null;
+    
     userSearchInput.addEventListener('input', function() {
-      const val = userSearchInput.value.trim().toLowerCase();
+      const val = userSearchInput.value.trim();
       searchSuggestions.innerHTML = '';
+      
+      // Clear previous timeout
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+      
       if (val.length === 0) {
         searchSuggestions.style.display = 'none';
         return;
       }
-      const matches = knownUsers.filter(username => username.toLowerCase().includes(val));
-      if (matches.length === 0) {
-        searchSuggestions.style.display = 'none';
-        return;
-      }
-      matches.forEach(username => {
-        const li = document.createElement('li');
-        li.textContent = username;
-        li.onclick = () => {
-          userSearchInput.value = username;
-          searchSuggestions.style.display = 'none';
-        };
-        searchSuggestions.appendChild(li);
-      });
-      searchSuggestions.style.display = 'block';
+      
+      // Debounce search
+      searchTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(val)}`, {
+            headers: getAuthHeaders()
+          });
+          
+          if (res.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+          }
+          
+          if (!res.ok) {
+            throw new Error('Failed to search users');
+          }
+          
+          const data = await res.json();
+          const users = data.users || [];
+          
+          if (users.length === 0) {
+            searchSuggestions.style.display = 'none';
+            return;
+          }
+          
+          users.forEach(user => {
+            const li = document.createElement('li');
+            const displayName = user.fullName || user.username;
+            li.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="${user.avatarUrl ? (user.avatarUrl.startsWith('http') ? user.avatarUrl : API_BASE_URL + user.avatarUrl) : ''}" 
+                     style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #4ac467;" />
+                <span>${displayName}</span>
+              </div>
+            `;
+            li.onclick = () => {
+              userSearchInput.value = '';
+              searchSuggestions.style.display = 'none';
+              window.location.href = `profile.html?user=${user.username}`;
+            };
+            searchSuggestions.appendChild(li);
+          });
+          
+          searchSuggestions.style.display = 'block';
+        } catch (err) {
+          console.error('Error searching users:', err);
+        }
+      }, 300);
     });
+    
     document.addEventListener('click', function(event) {
-      if (!userSearchInput.contains(event.target)) {
+      if (!userSearchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
         searchSuggestions.style.display = 'none';
       }
     });

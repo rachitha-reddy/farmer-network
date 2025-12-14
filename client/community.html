@@ -131,35 +131,179 @@
       transform: scale(1.03);
     }
 
-    .community-section {
+    .community-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 30px;
       width: 96%;
       max-width: 1000px;
     }
-    .community {
-      background-color: #ffffff;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 25px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    .community-btn {
+      padding: 12px 24px;
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #fff;
+      background-color: #27ae60;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+      text-transform: capitalize;
     }
-    .community h3 {
-      color: #1b5e20;
+    .community-btn:hover {
+      background-color: #1e8d4c;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(39, 174, 96, 0.4);
+    }
+    .community-btn.active {
+      background-color: #1b5e20;
+      box-shadow: 0 4px 12px rgba(27, 94, 32, 0.5);
+    }
+    .community-posts-container {
+      width: 96%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    .sample-post {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      background: #fff;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 12px;
     }
-    .post-card {
-      background-color: #f9fbe7;
-      border-left: 5px solid #66bb6a;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #2f8f3a;
     }
-    .post-card img {
-      max-width: 100%;
-      border-radius: 8px;
-      margin-top: 10px;
+    .username {
+      font-weight: 700;
+      font-size: 1em;
+      color: #127042;
     }
-    .post-card p {
-      margin: 6px 0;
+    .image-carousel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .carousel-arrow {
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #156343;
+      padding: 6px 10px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    .carousel-arrow:active {
+      background: #eafbe6;
+    }
+    .left-arrow { margin-right: 12px; }
+    .right-arrow { margin-left: 12px; }
+    #postImage {
+      max-width: 400px;
+      max-height: 250px;
+      border-radius: 6px;
+      border: 1.5px solid #dbe9d4;
+      box-shadow: 0 2px 8px rgba(60,80,67,.08);
+      background: #f8faf7;
+      margin: 0 10px;
+    }
+    .action-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin:12px 0 8px 0;
+      font-size: 1em;
+      color:#111;
+      font-weight:500;
+      user-select:none;
+    }
+    .action-btn {
+      background: none;
+      border: none;
+      padding: 3px 11px 3px 1px;
+      cursor: pointer;
+      font-size: 1.27em;
+      margin-right: 2px;
+      vertical-align: middle;
+    }
+    .action-bar .like-count, .action-bar .comment-count {
+      font-size:1.07em;
+      font-weight:500;
+      margin-left:4px;
+      margin-right: 18px;
+      vertical-align:middle;
+    }
+    .action-bar .comment-count { margin-left: 2px; }
+    .action-bar .like-label, .action-bar .comment-label {
+      margin-left: 1px;
+      font-weight:500;
+      font-size:1.09em;
+      margin-right:2px;
+      vertical-align:middle;
+    }
+    .post-footer {
+      margin-top: 12px;
+    }
+    .post-footer-username {
+      font-weight: 700;
+      color: #127042;
+      font-size: 0.95em;
+      margin-bottom: 4px;
+    }
+    .post-caption {
+      color: #333;
+      font-size: 0.9em;
+      line-height: 1.4;
+    }
+    .caption-username {
+      font-weight: 700;
+      color: #127042;
+    }
+    .post-community-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #38a653;
+      color: #fff;
+      border-radius: 10px;
+      font-size: 0.75em;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: capitalize;
+    }
+    .community-section-header {
+      background: linear-gradient(135deg, #2e7d32, #1b5e20);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-size: 1.3em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+      text-transform: capitalize;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+    .community-posts-group {
+      margin-bottom: 40px;
     }
     footer {
       text-align: center;
@@ -201,94 +345,451 @@
     <main class="community-main-content">
       <header>🌾 Farmer Community Network 🌾</header>
 
-      <form id="postForm">
-        <label for="farmerName">Your Name:</label>
-        <input type="text" id="farmerName" name="farmerName" placeholder="Enter your name" required>
+      <div id="communityList" class="community-selector"></div>
 
-        <label for="cropCommunity">Select Community:</label>
-        <select id="cropCommunity" name="cropCommunity" required>
-          <option value="">-- Select Crop --</option>
-          <option value="banana">Banana</option>
-          <option value="maize">Maize</option>
-          <option value="wheat">Wheat</option>
-          <option value="rice">Rice</option>
-        </select>
-
-        <label for="postContent">Describe your post:</label>
-        <textarea id="postContent" name="postContent" rows="3" placeholder="Share your experience, query, or observation..." required></textarea>
-
-        <label for="cropImage">Upload Crop Image:</label>
-        <input type="file" id="cropImage" name="cropImage" accept="image/*" required>
-
-        <button type="submit">Post</button>
-      </form>
-
-      <div class="community-section">
-        <div id="banana" class="community">
-          <h3>🍌 Banana Community</h3>
-          <div class="posts"></div>
-        </div>
-
-        <div id="maize" class="community">
-          <h3>🌽 Maize Community</h3>
-          <div class="posts"></div>
-        </div>
-
-        <div id="wheat" class="community">
-          <h3>🌾 Wheat Community</h3>
-          <div class="posts"></div>
-        </div>
-
-        <div id="rice" class="community">
-          <h3>🍚 Rice Community</h3>
-          <div class="posts"></div>
-        </div>
-      </div>
+      <div id="communityPostsContainer" class="community-posts-container"></div>
 
       <footer>© 2025 Farmer-to-Farmer Knowledge Network 🌱</footer>
     </main>
   </div>
 
   <script>
-    const form = document.getElementById('postForm');
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('farmerName').value.trim();
-      const crop = document.getElementById('cropCommunity').value;
-      const content = document.getElementById('postContent').value.trim();
-      const imageInput = document.getElementById('cropImage');
-
-      if (!crop) {
-        alert('Please select a community to post in.');
-        return;
-      }
-
-      const file = imageInput.files[0];
-      if (!file) {
-        alert('Please upload an image.');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const imageUrl = event.target.result;
-
-        const post = document.createElement('div');
-        post.classList.add('post-card');
-        post.innerHTML = `
-          <p><strong>${name}</strong> posted:</p>
-          <p>${content}</p>
-          <img src="${imageUrl}" alt="Crop Image">
-          <small><em>Posted in ${crop.charAt(0).toUpperCase() + crop.slice(1)} Community</em></small>
-        `;
-
-        document.querySelector("#" + crop + " .posts").prepend(post);
+    const API_BASE_URL = 'http://localhost:4000';
+    
+    // Check authentication
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+    
+    // Helper function to get auth headers
+    function getAuthHeaders() {
+      const token = localStorage.getItem('token');
+      return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       };
-
-      reader.readAsDataURL(file);
-      form.reset();
+    }
+    
+    // Placeholder image URL for posts without images
+    const PLACEHOLDER_IMAGE_URL = 'https://via.placeholder.com/600x400?text=No+Image';
+    
+    let currentCommunity = '';
+    
+    // Load posts filtered by community
+    async function loadCommunityPosts(community = '') {
+      try {
+        let url = `${API_BASE_URL}/api/posts`;
+        if (community && community.trim()) {
+          url += `?community=${encodeURIComponent(community.trim())}`;
+        }
+        
+        console.log('Loading posts from:', url);
+        
+        let res;
+        try {
+          res = await fetch(url);
+        } catch (fetchError) {
+          console.error('Network error:', fetchError);
+          throw new Error('Network error: Could not connect to server. Please check if the server is running.');
+        }
+        
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Community posts error:', res.status, text);
+          let errorData;
+          try {
+            errorData = JSON.parse(text);
+          } catch (parseError) {
+            errorData = { error: `Server returned status ${res.status}: ${text}` };
+          }
+          throw new Error(errorData.error || `Failed to load posts (${res.status})`);
+        }
+        
+        let data;
+        try {
+          data = await res.json();
+        } catch (parseError) {
+          console.error('Failed to parse response:', parseError);
+          throw new Error('Invalid response from server');
+        }
+        
+        console.log('Posts loaded:', data.posts?.length || 0);
+        const posts = data.posts || [];
+        
+        // Clear existing posts
+        const container = document.getElementById('communityPostsContainer');
+        if (!container) {
+          console.error('Container not found');
+          return;
+        }
+        container.innerHTML = '';
+        
+        if (posts.length === 0) {
+          const message = community && community.trim() 
+            ? `No posts yet for ${community.charAt(0).toUpperCase() + community.slice(1)} community.`
+            : 'No posts found in any community.';
+          container.innerHTML = `<p style="text-align: center; color: #666; font-size: 1.1em; padding: 30px;">${message}</p>`;
+          return;
+        }
+        
+        // Group posts by community
+        const postsByCommunity = {};
+        posts.forEach(post => {
+          const comm = (post.community || '').toLowerCase();
+          if (comm && comm !== 'other') {
+            if (!postsByCommunity[comm]) {
+              postsByCommunity[comm] = [];
+            }
+            postsByCommunity[comm].push(post);
+          }
+        });
+        
+        // Render posts grouped by community
+        const validCommunities = ['wheat', 'corn', 'rice', 'fruits', 'vegetables'];
+        let postIndex = 0;
+        
+        if (community && community.trim()) {
+          // Show only selected community with header
+          const normalizedComm = community.trim().toLowerCase();
+          const commPosts = postsByCommunity[normalizedComm] || [];
+          if (commPosts.length > 0) {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'community-posts-group';
+            groupDiv.innerHTML = `<div class="community-section-header">${normalizedComm.charAt(0).toUpperCase() + normalizedComm.slice(1)} Community</div>`;
+            const postsContainer = document.createElement('div');
+            postsContainer.style.display = 'flex';
+            postsContainer.style.flexDirection = 'column';
+            postsContainer.style.alignItems = 'center';
+            commPosts.forEach(post => {
+              renderPost(post, postIndex++, postsContainer);
+            });
+            groupDiv.appendChild(postsContainer);
+            container.appendChild(groupDiv);
+          } else {
+            container.innerHTML = `<p style="text-align: center; color: #666; font-size: 1.1em; padding: 30px;">No posts yet for ${normalizedComm.charAt(0).toUpperCase() + normalizedComm.slice(1)} community.</p>`;
+          }
+        } else {
+          // Show all communities grouped
+          validCommunities.forEach(comm => {
+            const commPosts = postsByCommunity[comm] || [];
+            if (commPosts.length > 0) {
+              const groupDiv = document.createElement('div');
+              groupDiv.className = 'community-posts-group';
+              groupDiv.innerHTML = `<div class="community-section-header">${comm.charAt(0).toUpperCase() + comm.slice(1)} Community</div>`;
+              const postsContainer = document.createElement('div');
+              postsContainer.style.display = 'flex';
+              postsContainer.style.flexDirection = 'column';
+              postsContainer.style.alignItems = 'center';
+              commPosts.forEach(post => {
+                renderPost(post, postIndex++, postsContainer);
+              });
+              groupDiv.appendChild(postsContainer);
+              container.appendChild(groupDiv);
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Error loading posts:', err);
+        const container = document.getElementById('communityPostsContainer');
+        if (container) {
+          // Only show error message for actual errors, not empty results
+          const errorMessage = err.message || 'Failed to load posts. Please try again.';
+          container.innerHTML = `<p style="text-align: center; color: #d32f2f; font-size: 1.1em; padding: 30px;">${errorMessage}</p>`;
+        }
+      }
+    }
+    
+    // Render a single post
+    function renderPost(post, index, container) {
+      const postDiv = document.createElement('div');
+      postDiv.className = 'sample-post';
+      postDiv.id = `post-${index}`;
+      
+      // Build image URLs
+      const images = post.images && post.images.length > 0 
+        ? post.images.map(img => img.startsWith('http') ? img : API_BASE_URL + img)
+        : [PLACEHOLDER_IMAGE_URL];
+      
+      const imageUrls = images.map(img => img.startsWith('http') ? img : API_BASE_URL + img);
+      // Use a closure to track image index per post
+      let currentImgIndex = 0;
+      
+      // Check if current user owns this post
+      const currentUsername = localStorage.getItem('username');
+      const isOwner = post.username === currentUsername;
+      const deleteButton = isOwner ? `<button class="delete-post-btn" id="deleteBtn-${index}" title="Delete post" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: auto; font-size: 0.9em;">🗑️ Delete</button>` : '';
+      
+      postDiv.innerHTML = `
+        <div class="user-row" style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" class="user-profile-link" data-username="${post.username || ''}">
+            <img class="avatar" src="${post.avatarUrl ? (post.avatarUrl.startsWith('http') ? post.avatarUrl : API_BASE_URL + post.avatarUrl) : ''}" alt="User photo" />
+            <span class="username">${post.username || ''}</span>
+          </div>
+          ${deleteButton}
+        </div>
+        ${post.community ? `<div class="post-community-badge">${post.community}</div>` : ''}
+        <div class="image-carousel">
+          <button class="carousel-arrow left-arrow" id="prevImgBtn-${index}">&#8592;</button>
+          <img id="postImage-${index}" src="${imageUrls[currentImgIndex]}" alt="Post image" />
+          <button class="carousel-arrow right-arrow" id="nextImgBtn-${index}">&#8594;</button>
+        </div>
+        <div class="action-bar">
+          <button class="action-btn" id="likeBtn-${index}" title="Like">
+            <span id="likeIcon-${index}">🤍</span>
+          </button>
+          <span class="like-label">Like</span>
+          <span class="like-count" id="likeCount-${index}">(0)</span>
+          <button class="action-btn" id="commentBtn-${index}" title="Comments">
+            <span>💬</span>
+          </button>
+          <span class="comment-label">Comment</span>
+          <span class="comment-count" id="commentCount-${index}">(0)</span>
+        </div>
+        <div class="post-footer">
+          <div class="post-footer-username user-profile-link" data-username="${post.username || ''}" style="cursor: pointer;">${post.username || ''}</div>
+          <div class="post-caption">
+            <span class="caption-username user-profile-link" data-username="${post.username || ''}" style="cursor: pointer;">${post.username || ''}</span>
+            <span class="caption-text">${post.caption || ''}</span>
+          </div>
+        </div>
+      `;
+      
+      postDiv.dataset.postId = post._id;
+      container.appendChild(postDiv);
+      
+      // Setup carousel for this post if multiple images
+      if (imageUrls.length > 1) {
+        const prevBtn = document.getElementById(`prevImgBtn-${index}`);
+        const nextBtn = document.getElementById(`nextImgBtn-${index}`);
+        const postImg = document.getElementById(`postImage-${index}`);
+        
+        // Use closure to maintain separate index for each post
+        (function(imgIndex) {
+          prevBtn.onclick = function() {
+            imgIndex = (imgIndex - 1 + imageUrls.length) % imageUrls.length;
+            postImg.src = imageUrls[imgIndex];
+          };
+          
+          nextBtn.onclick = function() {
+            imgIndex = (imgIndex + 1) % imageUrls.length;
+            postImg.src = imageUrls[imgIndex];
+          };
+        })(0);
+      } else {
+        // Hide arrows if only one image
+        const prevBtn = document.getElementById(`prevImgBtn-${index}`);
+        const nextBtn = document.getElementById(`nextImgBtn-${index}`);
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+      }
+      
+      // Setup like button
+      let liked = false;
+      const likeBtn = document.getElementById(`likeBtn-${index}`);
+      const likeIcon = document.getElementById(`likeIcon-${index}`);
+      const likeCountSpan = document.getElementById(`likeCount-${index}`);
+      likeBtn.onclick = function() {
+        liked = !liked;
+        likeIcon.textContent = liked ? "❤️" : "🤍";
+        const currentCount = parseInt(likeCountSpan.textContent.match(/\d+/)?.[0] || 0);
+        likeCountSpan.textContent = liked ? `(${currentCount + 1})` : `(${currentCount})`;
+      };
+      
+      // Setup delete button if it exists
+      if (isOwner) {
+        const deleteBtn = document.getElementById(`deleteBtn-${index}`);
+        if (deleteBtn) {
+          deleteBtn.onclick = async function() {
+            if (!confirm('Are you sure you want to delete this post?')) {
+              return;
+            }
+            
+            try {
+              const postId = postDiv.dataset.postId;
+              if (!postId) {
+                alert('Post ID not found');
+                return;
+              }
+              
+              const token = localStorage.getItem('token');
+              const res = await fetch(`${API_BASE_URL}/api/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+              
+              if (res.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+                return;
+              }
+              
+              if (!res.ok) {
+                const error = await res.json();
+                alert('Failed to delete post: ' + (error.error || 'Unknown error'));
+                return;
+              }
+              
+              // Remove post from DOM
+              postDiv.remove();
+              
+              // Reload posts
+              loadCommunityPosts(currentCommunity);
+            } catch (err) {
+              console.error('Error deleting post:', err);
+              alert('Failed to delete post. Please try again.');
+            }
+          };
+        }
+      }
+      
+      // Add click handlers for profile links
+      const profileLinks = postDiv.querySelectorAll('.user-profile-link');
+      profileLinks.forEach(link => {
+        link.onclick = (e) => {
+          e.stopPropagation();
+          const username = link.dataset.username;
+          if (username) {
+            window.location.href = `profile.html?user=${encodeURIComponent(username)}`;
+          }
+        };
+      });
+    }
+    
+    // Load available communities dynamically
+    async function loadCommunities() {
+      const communityList = document.getElementById('communityList');
+      if (!communityList) {
+        console.error('Community list container not found');
+        return;
+      }
+      
+      try {
+        console.log('Loading communities from:', `${API_BASE_URL}/api/posts/communities`);
+        const res = await fetch(`${API_BASE_URL}/api/posts/communities`);
+        
+        if (!res.ok) {
+          console.warn('Failed to load communities, using fallback');
+          throw new Error('Failed to load communities');
+        }
+        
+        const data = await res.json();
+        console.log('Communities loaded:', data);
+        const communities = data.communities || [];
+        
+        communityList.innerHTML = '';
+        
+        // Add "All" button
+        const allBtn = document.createElement('button');
+        allBtn.className = 'community-btn active';
+        allBtn.dataset.community = '';
+        allBtn.textContent = 'All Communities';
+        allBtn.onclick = function() {
+          document.querySelectorAll('.community-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentCommunity = '';
+          loadCommunityPosts('');
+        };
+        communityList.appendChild(allBtn);
+        
+        // Add buttons for each community
+        communities.forEach(comm => {
+          const btn = document.createElement('button');
+          btn.className = 'community-btn';
+          btn.dataset.community = comm.community;
+          
+          // Add emoji based on community
+          const emojiMap = {
+            'wheat': '🌾',
+            'corn': '🌽',
+            'rice': '🍚',
+            'fruits': '🍎',
+            'vegetables': '🥬'
+          };
+          const emoji = emojiMap[comm.community] || '';
+          
+          btn.textContent = `${emoji} ${comm.community.charAt(0).toUpperCase() + comm.community.slice(1)} (${comm.count})`;
+          btn.onclick = function() {
+            document.querySelectorAll('.community-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentCommunity = comm.community;
+            loadCommunityPosts(comm.community);
+          };
+          communityList.appendChild(btn);
+        });
+      } catch (err) {
+        console.error('Error loading communities:', err);
+        // Fallback to hardcoded communities if API fails
+        const fallbackCommunities = [
+          { community: 'wheat', emoji: '🌾' },
+          { community: 'corn', emoji: '🌽' },
+          { community: 'rice', emoji: '🍚' },
+          { community: 'fruits', emoji: '🍎' },
+          { community: 'vegetables', emoji: '🥬' }
+        ];
+        
+        communityList.innerHTML = '';
+        
+        const allBtn = document.createElement('button');
+        allBtn.className = 'community-btn active';
+        allBtn.dataset.community = '';
+        allBtn.textContent = 'All Communities';
+        allBtn.onclick = function() {
+          document.querySelectorAll('.community-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentCommunity = '';
+          loadCommunityPosts('');
+        };
+        communityList.appendChild(allBtn);
+        
+        fallbackCommunities.forEach(comm => {
+          const btn = document.createElement('button');
+          btn.className = 'community-btn';
+          btn.dataset.community = comm.community;
+          btn.textContent = `${comm.emoji} ${comm.community.charAt(0).toUpperCase() + comm.community.slice(1)}`;
+          btn.onclick = function() {
+            document.querySelectorAll('.community-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentCommunity = comm.community;
+            loadCommunityPosts(comm.community);
+          };
+          communityList.appendChild(btn);
+        });
+      }
+    }
+    
+    // Setup community selector buttons
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Verify API_BASE_URL is set
+      if (!API_BASE_URL) {
+        console.error('API_BASE_URL is not defined');
+        const container = document.getElementById('communityPostsContainer');
+        if (container) {
+          container.innerHTML = '<p style="text-align: center; color: #d32f2f; font-size: 1.1em; padding: 30px;">Configuration error: API URL not set.</p>';
+        }
+        return;
+      }
+      
+      // Test server connectivity
+      try {
+        const testRes = await fetch(`${API_BASE_URL}/`);
+        console.log('Server connectivity test:', testRes.status);
+      } catch (err) {
+        console.error('Server not reachable:', err);
+        const container = document.getElementById('communityPostsContainer');
+        if (container) {
+          container.innerHTML = '<p style="text-align: center; color: #d32f2f; font-size: 1.1em; padding: 30px;">Cannot connect to server. Please ensure the server is running on ' + API_BASE_URL + '</p>';
+        }
+        return;
+      }
+      
+      // Load communities dynamically
+      await loadCommunities();
+      
+      // Load all posts initially (grouped by community)
+      loadCommunityPosts('');
     });
   </script>
 

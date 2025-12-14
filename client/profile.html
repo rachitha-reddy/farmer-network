@@ -275,6 +275,17 @@
       font-weight: 600;
       color: #127042;
     }
+    .post-community-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #38a653;
+      color: #fff;
+      border-radius: 10px;
+      font-size: 0.75em;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: capitalize;
+    }
   </style>
 </head>
 <body>
@@ -286,7 +297,7 @@
       </div>
       <nav class="sidebar-nav">
         <a href="index.html" class="sidebar-nav-link"><i class="fa fa-home"></i> Home</a>
-        <a href="profile.html" class="sidebar-nav-link active"><i class="fa fa-user"></i> Profile</a>
+        <a href="profile.html" id="profileNavLink" class="sidebar-nav-link active"><i class="fa fa-user"></i> Profile</a>
         <a href="messages.html" class="sidebar-nav-link"><i class="fa fa-envelope"></i>Messages</a>
         <a href="weather.html" class="sidebar-nav-link"><i class="fa fa-cloud-sun"></i> Weather</a>
         <a href="resources.html" class="sidebar-nav-link"><i class="fa fa-book"></i> Resources</a>
@@ -295,44 +306,50 @@
         <a href="Feedback.html" class="sidebar-nav-link"><i class="fa fa-star"></i> Feedback</a>
       </nav>
     </aside>
+
     <main class="profile-main-content">
       <div class="profile-header">
         <div class="profile-main">
           <div class="profile-pic-block">
-            <img src="img4.jpeg" alt="Profile Pic" class="profile-pic" id="profilePic"/>
+            <!-- placeholder profile picture -->
+            <img src="" alt="Profile Pic" class="profile-pic" id="profilePic"/>
             <span class="profile-addpic" title="Upload new photo"><i class="fa-solid fa-plus"></i></span>
           </div>
           <div class="profile-info-block">
-            <h2 class="profile-username">Nature_raj</h2>
+            <!-- placeholder username -->
+            <h2 class="profile-username" id="profileUsername"></h2>
             <div class="profile-stats">
               <div class="profile-stat">
-                <span class="profile-stat-num">4</span>
+                <span class="profile-stat-num" id="profilePostsCount">0</span>
                 <span class="profile-stat-label">Posts</span>
               </div>
               <div class="profile-stat">
-                <span class="profile-stat-num">71</span>
+                <span class="profile-stat-num" id="profileFollowersCount">0</span>
                 <span class="profile-stat-label">Followers</span>
               </div>
               <div class="profile-stat">
-                <span class="profile-stat-num">72</span>
+                <span class="profile-stat-num" id="profileFollowingCount">0</span>
                 <span class="profile-stat-label">Following</span>
               </div>
             </div>
           </div>
         </div>
-        <button class="profile-edit-btn">EDIT</button>
+        <button class="profile-edit-btn" id="editProfileBtn">EDIT</button>
       </div>
+
       <div class="profile-tabs">
         <span class="profile-tab active" id="postsTab">Posts</span>
       </div>
-      <div class="profile-posts-grid" id="profilePostsGrid">
-        <!-- Sample posts inserted here -->
-      </div>
+
+      <!-- posts will be injected dynamically, no hardcoded sample content -->
+      <div class="profile-posts-grid" id="profilePostsGrid"></div>
     </main>
   </div>
+
   <button class="post-fab" id="openUploadModal" title="Add new post">
     <i class="fa-solid fa-plus"></i>
   </button>
+
   <div class="upload-modal" id="uploadModal">
     <div class="upload-modal-content">
       <button class="close-upload-modal" id="closeUploadModal" title="Close">&times;</button>
@@ -340,96 +357,336 @@
         Upload posts
         <input type="file" id="uploadFiles" accept="image/*,video/*" multiple style="display:none"/>
       </label>
+      <label class="caption-label" for="communitySelect">Community</label>
+      <select id="communitySelect" class="caption-input" required style="margin-bottom: 10px;">
+        <option value="">Select community...</option>
+        <option value="wheat">Wheat</option>
+        <option value="corn">Corn</option>
+        <option value="rice">Rice</option>
+        <option value="fruits">Fruits</option>
+        <option value="vegetables">Vegetables</option>
+        <option value="other">Other</option>
+      </select>
       <label class="caption-label" for="captionInput">Caption</label>
       <textarea class="caption-input" id="captionInput" placeholder="Enter caption here..."></textarea>
       <div id="uploadPreview"></div>
       <button id="addPostBtn" class="upload-btn" style="margin-top:9px;">Add Post</button>
     </div>
   </div>
+
   <div class="modal-post-bg" id="modalPostBg">
     <div class="modal-post-content" id="modalPostContent"></div>
   </div>
+
   <div class="modal-comment-popup" id="modalCommentBg">
     <div class="modal-comment-content">
       <button class="close-modal-comment" id="closeModalComment" title="Close">&times;</button>
       <ul class="modal-comment-list" id="modalCommentList"></ul>
     </div>
   </div>
+
   <div class="modal" id="profilePicModal">
     <div class="profile-pic-modal-content">
       <span class="close-modal">&times;</span>
-      <img src="img4.jpeg" alt="Enlarged Profile Pic" class="modal-profile-pic"/>
+      <!-- placeholder enlarged profile pic -->
+      <img src="" alt="Enlarged Profile Pic" class="modal-profile-pic" id="modalProfilePic"/>
     </div>
   </div>
-  <script>
-    const samplePosts = [
-      {
-        images: ["https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1171","https://images.unsplash.com/photo-1656826605781-fcd6c13b0bd5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170"],
-        videos: [],
-        caption: "A Regular day in the farm life.",
-        username: "nature_raj",
-        avatar: "img4.jpeg"
-      },
-      {
-        images: ["https://media.istockphoto.com/id/601122142/photo/crop-of-sun-kissed-mango-fruit-ripening-on-tree.jpg?s=1024x1024&w=is&k=20&c=b5LJ7YMSR_z9LGsC6s1bD48YKFuwRUTliq4lSUgp7Rc="],
-        videos: [],
-        caption: "Fresh Mangos in my farm this season!",
-        username: "nature_raj",
-        avatar: "img4.jpeg"
-      },
-      {
-        images: ["https://media.istockphoto.com/id/806252534/photo/indian-woman-farmer-planting-rice-seedlings-in-the-rice-paddy-field.jpg?s=1024x1024&w=is&k=20&c=_2sR9yB39oYzqglN7ehIp8V-DpNMXGMalYOf0Bka2Ek="],
-        videos: [],
-        caption: "Planting fresh crops.",
-        username: "nature_raj",
-        avatar: "img4.jpeg"
-      },
-      {
-        images: ["https://plus.unsplash.com/premium_photo-1661811847476-3ea28469f856?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=907"],
-        videos: [],
-        caption: "The Harvesting season is here!",
-        username: "nature_raj",
-        avatar: "img4.jpeg"
-      }
-    ];
 
+  <!-- Profile Edit Modal -->
+  <div class="upload-modal" id="profileEditModal" style="display:none;">
+    <div class="upload-modal-content" style="min-width: 400px;">
+      <button class="close-upload-modal" id="closeProfileEditModal" title="Close">&times;</button>
+      <h2 style="margin-top: 0; color: #2e7d32;">Edit Profile</h2>
+      <form id="profileEditForm">
+        <label class="caption-label" for="editFullName">Full Name:</label>
+        <input type="text" id="editFullName" class="caption-input" placeholder="Enter full name" />
+        
+        <label class="caption-label" for="editFarmType">Farm Type:</label>
+        <input type="text" id="editFarmType" class="caption-input" placeholder="e.g., Organic, Traditional" />
+        
+        <label class="caption-label" for="editCrops">Crops (comma-separated):</label>
+        <input type="text" id="editCrops" class="caption-input" placeholder="e.g., Wheat, Rice, Corn" />
+        
+        <label class="caption-label" for="editAvatar">Profile Picture:</label>
+        <input type="file" id="editAvatar" accept="image/*" style="margin-bottom: 10px;" />
+        <div id="avatarPreview" style="margin: 10px 0;"></div>
+        
+        <button type="submit" class="upload-btn">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:4000';
+    
+    // Check authentication
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+    
+    // Helper function to get auth headers
+    function getAuthHeaders() {
+      const token = localStorage.getItem('token');
+      return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+    }
+    
+    // Get username from URL query parameter or use current user
+    function getViewingUsername() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const usernameParam = urlParams.get('user');
+      return usernameParam || localStorage.getItem('username');
+    }
+    
+    // Check if viewing own profile
+    function isViewingOwnProfile() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const usernameParam = urlParams.get('user');
+      const currentUsername = localStorage.getItem('username');
+      return !usernameParam || usernameParam === currentUsername;
+    }
+    
+    // Load user profile from backend
+    async function loadProfile() {
+      try {
+        const viewingUsername = getViewingUsername();
+        const currentUsername = localStorage.getItem('username');
+        const token = localStorage.getItem('token');
+        
+        let res;
+        if (viewingUsername === currentUsername) {
+          // Load current user's profile
+          res = await fetch(`${API_BASE_URL}/api/users/profile`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        } else {
+          // Load other user's profile by username
+          res = await fetch(`${API_BASE_URL}/api/users/by-username/${encodeURIComponent(viewingUsername)}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        }
+        
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        if (!res.ok) {
+          throw new Error('Failed to load profile');
+        }
+        
+        const data = await res.json();
+        const user = data.user;
+        
+        // Update profile display
+        document.getElementById('profileUsername').textContent = user.fullName || user.username || '';
+        if (user.avatarUrl) {
+          document.getElementById('profilePic').src = API_BASE_URL + user.avatarUrl;
+        }
+        if (user.farmType) {
+          // You can display farm type somewhere if needed
+        }
+        
+        // Show/hide edit button based on whether viewing own profile
+        const editBtn = document.getElementById('editProfileBtn');
+        if (isViewingOwnProfile()) {
+          editBtn.style.display = '';
+        } else {
+          editBtn.style.display = 'none';
+        }
+        
+        // Hide post FAB if viewing someone else's profile
+        const postFab = document.getElementById('openUploadModal');
+        if (isViewingOwnProfile()) {
+          postFab.style.display = '';
+        } else {
+          postFab.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
+        // Fallback to username from localStorage
+        const username = localStorage.getItem('username');
+        if (username) {
+          document.getElementById('profileUsername').textContent = username;
+        }
+      }
+    }
+    
+    // Load profile and posts on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set profile nav link to always go to current user's profile
+      const profileNavLink = document.getElementById('profileNavLink');
+      if (profileNavLink) {
+        profileNavLink.href = 'profile.html';
+      }
+      
+      loadProfile();
+      loadUserPosts();
+    });
+    
+    // Placeholder image URL for posts without images
+    // TODO: Replace with actual file upload integration
+    const PLACEHOLDER_IMAGE_URL = 'https://via.placeholder.com/600x400?text=No+Image';
+
+    // Load user posts
+    async function loadUserPosts() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/posts`);
+        if (!res.ok) {
+          throw new Error('Failed to load posts');
+        }
+        const data = await res.json();
+        const posts = data.posts || [];
+        
+        // Filter posts for the viewed user
+        const viewingUsername = getViewingUsername();
+        const userPosts = posts.filter(p => p.username === viewingUsername);
+        
+        // Update post count
+        document.getElementById('profilePostsCount').textContent = userPosts.length;
+        
+        // Clear existing posts
+        profilePostsGrid.innerHTML = '';
+        
+        // Render posts
+        userPosts.forEach(post => {
+          const postObj = {
+            images: post.images && post.images.length > 0 
+              ? post.images.map(url => url.startsWith('http') ? url : API_BASE_URL + url) 
+              : [PLACEHOLDER_IMAGE_URL],
+            caption: post.caption || '',
+            username: post.username || '',
+            community: post.community || '',
+            avatar: post.avatarUrl ? (post.avatarUrl.startsWith('http') ? post.avatarUrl : API_BASE_URL + post.avatarUrl) : ''
+          };
+          const item = createPostItem(postObj, post._id);
+          profilePostsGrid.appendChild(item);
+        });
+      } catch (err) {
+        console.error('Error loading posts:', err);
+        alert('Failed to load posts. Please try again.');
+      }
+    }
+    
+    
     const profilePostsGrid = document.getElementById('profilePostsGrid');
 
-    // Function to create a post item element
-    function createPostItem(post) {
+    // Function to create a post item element (kept for backend use)
+    function createPostItem(post, postId = null) {
       const item = document.createElement('div');
       item.className = 'profile-post-item';
+      item.style.position = 'relative';
+      
+      // Add delete button (only on profile page, always visible since it's user's own posts)
+      const deleteBtn = document.createElement('button');
+      deleteBtn.innerHTML = '🗑️';
+      deleteBtn.className = 'delete-post-btn-profile';
+      deleteBtn.style.cssText = 'position: absolute; top: 5px; right: 5px; background: rgba(244, 67, 54, 0.9); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 14px; z-index: 10; display: flex; align-items: center; justify-content: center;';
+      deleteBtn.title = 'Delete post';
+      
+      // Store post ID
+      if (postId) {
+        item.dataset.postId = postId;
+      }
+      
       let imgOrVideo;
 
-      if (post.images.length) {
+      if (post.images && post.images.length) {
         imgOrVideo = document.createElement('img');
         imgOrVideo.src = post.images[0];
         imgOrVideo.className = 'profile-post-img';
         item.appendChild(imgOrVideo);
-      } else if (post.videos.length) {
+      } else if (post.videos && post.videos.length) {
         imgOrVideo = document.createElement('div');
         imgOrVideo.textContent = `📹 ${post.videos[0]}`;
         imgOrVideo.style = 'margin-bottom:10px;font-size:1.19em;color:#388642;word-break:break-all;';
         item.appendChild(imgOrVideo);
       }
+
+      // Add community badge if present
+      if (post.community) {
+        const communityBadge = document.createElement('div');
+        communityBadge.className = 'post-community-badge';
+        communityBadge.textContent = post.community;
+        item.appendChild(communityBadge);
+      }
+
       const caption = document.createElement('div');
       caption.className = 'profile-post-caption';
-      caption.textContent = post.caption;
+      caption.textContent = post.caption || "";
       item.appendChild(caption);
 
       item.dataset.post = JSON.stringify(post);
-
-      item.onclick = showPostModal;
+      
+      // Handle click on post (but not on delete button)
+      item.onclick = function(e) {
+        if (!e.target.closest('.delete-post-btn-profile')) {
+          showPostModal.call(this);
+        }
+      };
+      
+      // Add delete button click handler
+      if (postId) {
+        deleteBtn.onclick = async function(e) {
+          e.stopPropagation(); // Prevent triggering post modal
+          
+          if (!confirm('Are you sure you want to delete this post?')) {
+            return;
+          }
+          
+          try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_BASE_URL}/api/posts/${postId}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            
+            if (res.status === 401) {
+              localStorage.removeItem('token');
+              window.location.href = 'login.html';
+              return;
+            }
+            
+            if (!res.ok) {
+              const error = await res.json();
+              alert('Failed to delete post: ' + (error.error || 'Unknown error'));
+              return;
+            }
+            
+            // Remove post from DOM
+            item.remove();
+            
+            // Update post count
+            const currentCount = parseInt(document.getElementById('profilePostsCount').textContent) || 0;
+            document.getElementById('profilePostsCount').textContent = Math.max(0, currentCount - 1);
+            
+            // Reload posts to refresh
+            loadUserPosts();
+          } catch (err) {
+            console.error('Error deleting post:', err);
+            alert('Failed to delete post. Please try again.');
+          }
+        };
+        item.appendChild(deleteBtn);
+      }
+      
       return item;
     }
 
-    // Insert sample posts on page load
-    samplePosts.forEach(p => {
-      const postItem = createPostItem(p);
-      profilePostsGrid.appendChild(postItem);
-    });
+    // Posts are loaded from backend via loadUserPosts() function
 
-    // Upload post modal functionality remains same as your code
+    // Upload post modal functionality unchanged
     const openUploadModal = document.getElementById('openUploadModal');
     const uploadModal = document.getElementById('uploadModal');
     const closeUploadModal = document.getElementById('closeUploadModal');
@@ -437,6 +694,7 @@
     const addPostBtn = document.getElementById('addPostBtn');
     const uploadPreview = document.getElementById('uploadPreview');
     const captionInput = document.getElementById('captionInput');
+    const communitySelect = document.getElementById('communitySelect');
     let filesToUpload = [];
 
     openUploadModal.onclick = () => { uploadModal.style.display = 'flex'; }
@@ -445,6 +703,7 @@
       uploadPreview.innerHTML = '';
       filesToUpload = [];
       captionInput.value = '';
+      communitySelect.value = '';
     }
     window.onclick = e => {
       if (e.target === uploadModal) closeUploadModal.onclick();
@@ -470,61 +729,132 @@
       });
     };
 
-    addPostBtn.onclick = function() {
-      if (!filesToUpload.length && !captionInput.value.trim()) return;
-      const postObj = {
-        images: filesToUpload.filter(f => f.type.startsWith('image/')).map(f => URL.createObjectURL(f)),
-        videos: filesToUpload.filter(f => f.type.startsWith('video/')).map(f => f.name),
-        caption: captionInput.value.trim(),
-        username: "You", // Or logged in user name
-        avatar: ""
-      };
-      const item = createPostItem(postObj);
-      profilePostsGrid.prepend(item);
-      closeUploadModal.onclick();
+    addPostBtn.onclick = async function() {
+      // Validate community
+      const community = communitySelect.value.trim();
+      if (!community) {
+        alert('Please select a community');
+        return;
+      }
+      
+      if (!filesToUpload.length && !captionInput.value.trim()) {
+        alert('Please add at least one image or a caption');
+        return;
+      }
+      
+      try {
+        // Create FormData for file upload
+        const formData = new FormData();
+        filesToUpload.forEach(file => {
+          formData.append('images', file);
+        });
+        formData.append('caption', captionInput.value.trim());
+        formData.append('community', community);
+        
+        // Send POST request with JWT token and FormData
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/posts`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+            // Don't set Content-Type, let browser set it with boundary for FormData
+          },
+          body: formData
+        });
+        
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        if (!res.ok) {
+          const error = await res.json();
+          alert('Failed to create post: ' + (error.error || 'Unknown error'));
+          return;
+        }
+        
+        const data = await res.json();
+        const savedPost = data.post;
+        
+        // Prepend new post to grid without reloading
+        const postObj = {
+          images: savedPost.images && savedPost.images.length > 0 
+            ? savedPost.images.map(url => url.startsWith('http') ? url : API_BASE_URL + url) 
+            : [PLACEHOLDER_IMAGE_URL],
+          caption: savedPost.caption || '',
+          username: savedPost.username || '',
+          community: savedPost.community || '',
+          avatar: savedPost.avatarUrl 
+            ? (savedPost.avatarUrl.startsWith('http') ? savedPost.avatarUrl : API_BASE_URL + savedPost.avatarUrl) 
+            : ''
+        };
+        const item = createPostItem(postObj, savedPost._id);
+        profilePostsGrid.prepend(item);
+        
+        // Update post count
+        const currentCount = parseInt(document.getElementById('profilePostsCount').textContent) || 0;
+        document.getElementById('profilePostsCount').textContent = currentCount + 1;
+        
+        // Clear form and close modal
+        closeUploadModal.onclick();
+      } catch (err) {
+        console.error('Error creating post:', err);
+        alert('Failed to create post. Please try again.');
+      }
     };
 
-    // Post popup modal logic
+    // Post popup modal logic, using placeholders for missing data
     function showPostModal() {
       const post = JSON.parse(this.dataset.post);
       const modalBg = document.getElementById('modalPostBg');
       const modal = document.getElementById('modalPostContent');
       let currentIdx = 0;
+
       function render() {
+        const avatarSrc = post.avatar || "";
+        const username = post.username || "";
+        const captionText = post.caption || "";
+
         modal.innerHTML = `
           <button class="close-modal-post" id="closeModalPost" title="Close">&times;</button>
           <div class="modal-user-row">
-            <img class="modal-avatar" src="${post.avatar || 'img2.jpg'}" alt="User photo"/>
-            <span class="modal-username">${post.username || 'User'}</span>
+            <img class="modal-avatar" src="${avatarSrc}" alt="User photo"/>
+            <span class="modal-username">${username}</span>
           </div>
           <div class="modal-image-carousel">
             <button class="modal-carousel-arrow modal-left-arrow" id="modalPrevImgBtn">&#8592;</button>
-            ${post.images && post.images.length ? 
-              `<img id="modalPostImage" class="modal-post-img" src="${post.images[currentIdx]}" alt="Post Image"/>` :
-              post.videos && post.videos.length ?
-              `<div style="margin:0 18px;font-size:2em;color:#1a8437;">📹 ${post.videos[0]}</div>` : ''
+            ${
+              post.images && post.images.length
+                ? `<img id="modalPostImage" class="modal-post-img" src="${post.images[currentIdx]}" alt="Post Image"/>`
+                : post.videos && post.videos.length
+                  ? `<div style="margin:0 18px;font-size:2em;color:#1a8437;">📹 ${post.videos[0]}</div>`
+                  : ``
             }
             <button class="modal-carousel-arrow modal-right-arrow" id="modalNextImgBtn">&#8594;</button>
           </div>
           <div class="modal-action-bar">
             <button class="modal-action-btn" id="modalLikeBtn" title="Like"><span id="modalLikeIcon">🤍</span></button>
             <span class="modal-like-label">Like</span>
-            <span class="modal-like-count" id="modalLikeCount">(10)</span>
+            <span class="modal-like-count" id="modalLikeCount">(0)</span>
             <button class="modal-action-btn" id="modalCommentBtn" title="Comment"><span>💬</span></button>
             <span class="modal-comment-label">Comment</span>
-            <span class="modal-comment-count" id="modalCommentCount">(4)</span>
+            <span class="modal-comment-count" id="modalCommentCount">(0)</span>
           </div>
-          <div class="modal-post-footer-username">${post.username || 'User'}</div>
-          <div class="modal-post-caption"><span class="modal-caption-username">${post.username || 'User'}</span> 
-            ${post.caption || ''}</div>
+          <div class="modal-post-footer-username">${username}</div>
+          <div class="modal-post-caption">
+            <span class="modal-caption-username">${username}</span> ${captionText}
+          </div>
         `;
+
         document.getElementById('closeModalPost').onclick = closePostModal;
-        if(post.images && post.images.length > 1){
-          document.getElementById('modalPrevImgBtn').onclick = function(){
+
+        if (post.images && post.images.length > 1) {
+          document.getElementById('modalPrevImgBtn').onclick = function() {
             currentIdx = (currentIdx - 1 + post.images.length) % post.images.length;
             render();
           }
-          document.getElementById('modalNextImgBtn').onclick = function(){
+          document.getElementById('modalNextImgBtn').onclick = function() {
             currentIdx = (currentIdx + 1) % post.images.length;
             render();
           }
@@ -532,33 +862,174 @@
           document.getElementById('modalPrevImgBtn').style.display = 'none';
           document.getElementById('modalNextImgBtn').style.display = 'none';
         }
-        let modalLiked = false, modalLikeCount = 10;
-        document.getElementById('modalLikeBtn').onclick = function(){
+
+        let modalLiked = false, modalLikeCount = 0;
+        document.getElementById('modalLikeBtn').onclick = function() {
           modalLiked = !modalLiked;
           document.getElementById('modalLikeIcon').textContent = modalLiked ? "❤️" : "🤍";
-          document.getElementById('modalLikeCount').textContent = modalLiked ? `(${modalLikeCount+1})` : `(${modalLikeCount})`;
+          document.getElementById('modalLikeCount').textContent = modalLiked ? `(${modalLikeCount + 1})` : `(${modalLikeCount})`;
         }
+
         document.getElementById('modalCommentBtn').onclick = openCommentModal;
       }
+
       render();
       modalBg.style.display = 'flex';
     }
-    function closePostModal(){
+
+    function closePostModal() {
       document.getElementById('modalPostBg').style.display = 'none';
     }
-    // Comment modal logic
-    function openCommentModal(){
+
+    // Comment modal logic – no hardcoded sample comments
+    function openCommentModal() {
       document.getElementById('modalCommentBg').style.display = 'flex';
-      document.getElementById('modalCommentList').innerHTML = `
-        <li><span class="modal-comment-username">nature_raj</span> Nice post!</li>
-        <li><span class="modal-comment-username">green_field</span> Awesome snap.</li>
-        <li><span class="modal-comment-username">sunlover</span> 👏👏😍</li>
-      `;
+      document.getElementById('modalCommentList').innerHTML = "";
     }
-    function closeCommentModal(){
+
+    function closeCommentModal() {
       document.getElementById('modalCommentBg').style.display = 'none';
     }
+
     document.getElementById('closeModalComment').onclick = closeCommentModal;
+
+    // Profile Edit Modal functionality
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const profileEditModal = document.getElementById('profileEditModal');
+    const closeProfileEditModal = document.getElementById('closeProfileEditModal');
+    const profileEditForm = document.getElementById('profileEditForm');
+    const editAvatarInput = document.getElementById('editAvatar');
+    const avatarPreview = document.getElementById('avatarPreview');
+
+    // Open edit modal
+    editProfileBtn.onclick = async function() {
+      // Load current profile data
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          const user = data.user;
+          document.getElementById('editFullName').value = user.fullName || '';
+          document.getElementById('editFarmType').value = user.farmType || '';
+          document.getElementById('editCrops').value = user.crops ? (Array.isArray(user.crops) ? user.crops.join(', ') : user.crops) : '';
+          if (user.avatarUrl) {
+            avatarPreview.innerHTML = `<img src="${API_BASE_URL + user.avatarUrl}" style="max-width: 150px; max-height: 150px; border-radius: 8px; margin-top: 10px;" />`;
+          }
+        }
+      } catch (err) {
+        console.error('Error loading profile for edit:', err);
+      }
+      profileEditModal.style.display = 'flex';
+    };
+
+    // Close edit modal
+    closeProfileEditModal.onclick = function() {
+      profileEditModal.style.display = 'none';
+      avatarPreview.innerHTML = '';
+      profileEditForm.reset();
+    };
+
+    // Preview avatar before upload
+    editAvatarInput.onchange = function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          avatarPreview.innerHTML = `<img src="${e.target.result}" style="max-width: 150px; max-height: 150px; border-radius: 8px; margin-top: 10px;" />`;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    // Handle profile edit form submission
+    profileEditForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      try {
+        const formData = new FormData();
+        formData.append('fullName', document.getElementById('editFullName').value.trim());
+        formData.append('farmType', document.getElementById('editFarmType').value.trim());
+        
+        const cropsValue = document.getElementById('editCrops').value.trim();
+        if (cropsValue) {
+          const cropsArray = cropsValue.split(',').map(c => c.trim()).filter(c => c);
+          formData.append('crops', JSON.stringify(cropsArray));
+        }
+        
+        if (editAvatarInput.files[0]) {
+          formData.append('avatar', editAvatarInput.files[0]);
+        }
+        
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        if (!res.ok) {
+          const error = await res.json();
+          alert('Failed to update profile: ' + (error.error || 'Unknown error'));
+          return;
+        }
+        
+        const data = await res.json();
+        const updatedUser = data.user;
+        
+        // Update profile display
+        document.getElementById('profileUsername').textContent = updatedUser.fullName || updatedUser.username || '';
+        if (updatedUser.avatarUrl) {
+          document.getElementById('profilePic').src = API_BASE_URL + updatedUser.avatarUrl;
+        }
+        
+        // Update localStorage
+        if (updatedUser.fullName) {
+          localStorage.setItem('fullName', updatedUser.fullName);
+        }
+        if (updatedUser.avatarUrl) {
+          localStorage.setItem('avatarUrl', updatedUser.avatarUrl);
+        }
+        
+        // Close modal
+        closeProfileEditModal.onclick();
+        alert('Profile updated successfully!');
+      } catch (err) {
+        console.error('Error updating profile:', err);
+        alert('Failed to update profile. Please try again.');
+      }
+    });
+
+    // Profile picture click to upload
+    document.querySelector('.profile-addpic').onclick = function() {
+      editAvatarInput.click();
+    };
+
+    // Click on profile pic to view enlarged
+    document.getElementById('profilePic').onclick = function() {
+      const modal = document.getElementById('profilePicModal');
+      const modalImg = document.getElementById('modalProfilePic');
+      modalImg.src = this.src;
+      modal.style.display = 'block';
+    };
+
+    // Close profile pic modal
+    document.querySelector('#profilePicModal .close-modal').onclick = function() {
+      document.getElementById('profilePicModal').style.display = 'none';
+    };
   </script>
 </body>
 </html>

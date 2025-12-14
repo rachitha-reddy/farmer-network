@@ -133,26 +133,36 @@
     color: #33691e;
     margin-bottom: 8px;
   }
-  #resourceForm input,
-  #resourceForm select,
-  #resourceForm button {
+  .resource-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .resource-form input,
+  .resource-form button {
     width: 100%;
-    padding: 9px 10px;
-    margin-top: 6px;
-    margin-bottom: 15px;
+    padding: 12px 15px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
     background: #fafafa;
+    box-sizing: border-box;
   }
-  #resourceForm button {
+  .resource-form input:focus {
+    outline: none;
+    border-color: #2e7d32;
+    background: #fff;
+  }
+  .resource-form button {
     background-color: #2e7d32;
     color: white;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    border: none;
+    margin-top: 5px;
   }
-  #resourceForm button:hover {
+  .resource-form button:hover {
     background-color: #1b5e20;
   }
   footer {
@@ -194,126 +204,146 @@
 
   <h2 class="section-title">Available Resources</h2>
 
-  <!-- Existing Resources with Contact Numbers -->
-  <div class="resource-card">
-    <h3>Tractor</h3>
-    <p>Status: <strong>Available</strong></p>
-    <p>Owner: Ramesh</p>
-    <p>Contact: <strong>9876543210</strong></p>
-    <p>Location: Village A (within 5 km)</p>
-    <p>Next Available: Immediately</p>
+  <!-- Resource card template (hidden, used for cloning) -->
+  <div class="resource-card" id="resourceCardTemplate" style="display:none;">
+    <h3 class="resource-name"></h3>
+    <p><strong>Status:</strong> <span class="resource-status"></span></p>
+    <p><strong>Owner:</strong> <span class="resource-owner"></span></p>
+    <p><strong>Contact:</strong> <span class="resource-contact"></span></p>
+    <p><strong>Location:</strong> <span class="resource-location"></span></p>
+    <p><strong>Next Available:</strong> <span class="resource-next-available"></span></p>
   </div>
 
-  <div class="resource-card">
-    <h3>Harvester</h3>
-    <p>Status: <strong>Borrowed</strong></p>
-    <p>Owner: Suresh</p>
-    <p>Contact: <strong>9876512345</strong></p>
-    <p>Location: Village B (within 4 km)</p>
-    <p>Next Available: 3 days</p>
-  </div>
-
-  <div class="resource-card">
-    <h3>Sprayer</h3>
-    <p>Status: <strong>Available</strong></p>
-    <p>Owner: Lakshmi</p>
-    <p>Contact: <strong>9876509876</strong></p>
-    <p>Location: Village C (within 5 km)</p>
-    <p>Next Available: Immediately</p>
-  </div>
+  <!-- Container where cards will be injected -->
+  <div id="resourcesContainer"></div>
 
   <h2 class="section-title">Add a New Resource</h2>
 
   <div class="resource-card">
-    <form id="resourceForm">
-      <label for="resourceName">Resource Name:</label>
-      <input type="text" id="resourceName" name="resourceName" required>
-
-      <label for="ownerName">Owner Name:</label>
-      <input type="text" id="ownerName" name="ownerName" required>
-
-      <label for="contactNumber">Contact Number:</label>
-      <input type="tel" id="contactNumber" name="contactNumber" placeholder="e.g., 9876543210" required>
-
-      <label for="location">Location (Village/Area):</label>
-      <input type="text" id="location" name="location" placeholder="e.g., Village X" required>
-
-      <label for="status">Status:</label>
-      <select id="status" name="status">
-        <option value="Available">Available</option>
-        <option value="Borrowed">Borrowed</option>
-      </select>
-
-      <label for="nextAvailable">Next Available (days):</label>
-      <input type="number" id="nextAvailable" name="nextAvailable" min="0">
-
+    <form id="resourceForm" class="resource-form">
+      <input type="text" id="resName" placeholder="Resource name" required />
+      <input type="text" id="resStatus" placeholder="Status (Available / Borrowed)" required />
+      <input type="text" id="resOwner" placeholder="Owner name" required />
+      <input type="text" id="resContact" placeholder="Contact number" required />
+      <input type="text" id="resLocation" placeholder="Location" required />
+      <input type="text" id="resNextAvailable" placeholder="Next available (e.g. Immediately)" required />
       <button type="submit">Add Resource</button>
     </form>
   </div>
 </div>
 
 <script>
- const form = document.getElementById('resourceForm');
-const container = form.parentElement;
-
-// Load resources from backend and render
-async function loadResources() {
-  try {
-    const res = await fetch('/api/resources');
-    const resources = await res.json();
-
-    // Remove existing resource cards except the form card
-    [...container.querySelectorAll('.resource-card')]
-      .filter(card => card !== form.parentElement)
-      .forEach(card => card.remove());
-
-    // Insert resource cards above the form
-    resources.forEach(r => {
-      const newCard = document.createElement('div');
-      newCard.classList.add('resource-card');
-      newCard.innerHTML = `
-        <h3>${r.name}</h3>
-        <p>Status: <strong>${r.status}</strong></p>
-        <p>Owner: ${r.owner}</p>
-        <p>Contact: <strong>${r.contact}</strong></p>
-        <p>Location: ${r.location} (within 5 km)</p>
-        <p>Next Available: ${r.nextAvailable == 0 || r.nextAvailable.toLowerCase() === 'immediately' ? 'Immediately' : r.nextAvailable + ' days'}</p>
-      `;
-      container.insertBefore(newCard, form);
-    });
-  } catch (error) {
-    console.error('Failed to load resources:', error);
+  const API_BASE_URL = 'http://localhost:4000';
+  
+  // Check authentication
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
   }
-}
-
-loadResources();
-
-// Submit new resource to backend
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const resourceData = {
-    name: form.resourceName.value.trim(),
-    owner: form.ownerName.value.trim(),
-    contact: form.contactNumber.value.trim(),
-    location: form.location.value.trim(),
-    status: form.status.value,
-    nextAvailable: form.nextAvailable.value || 'Immediately'
-  };
-
-  try {
-    const res = await fetch('/api/resources', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(resourceData)
-    });
-    if (!res.ok) throw new Error('Failed to add resource');
-    await loadResources();
-    form.reset();
-  } catch (error) {
-    console.error('Error adding resource:', error);
+  
+  // Helper function to get auth headers
+  function getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    };
   }
-});
+
+  const form = document.getElementById('resourceForm');
+  const resourcesContainer = document.getElementById('resourcesContainer');
+  const template = document.getElementById('resourceCardTemplate');
+
+  // Load resources from backend and render
+  async function loadResources() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/resources`);
+      
+      if (!res.ok) {
+        throw new Error('Failed to load resources');
+      }
+      
+      const data = await res.json();
+      const resources = data.resources || [];
+
+      // Clear container
+      resourcesContainer.innerHTML = '';
+
+      // For each resource, clone the template and fill in data
+      resources.forEach(resource => {
+        const card = template.cloneNode(true);
+        card.id = ''; // Remove the template ID
+        card.style.display = 'block';
+        
+        // Fill in the data
+        card.querySelector('.resource-name').textContent = resource.name || '';
+        card.querySelector('.resource-status').textContent = resource.status || '';
+        card.querySelector('.resource-owner').textContent = resource.owner || '';
+        card.querySelector('.resource-contact').textContent = resource.contact || '';
+        card.querySelector('.resource-location').textContent = resource.location || '';
+        card.querySelector('.resource-next-available').textContent = resource.nextAvailable || '';
+        
+        // Append to container
+        resourcesContainer.appendChild(card);
+      });
+    } catch (error) {
+      console.error('Failed to load resources:', error);
+      alert('Failed to load resources. Please try again.');
+    }
+  }
+
+  // Load resources on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    loadResources();
+  });
+
+  // Handle form submission
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Read values from input fields
+    const resourceData = {
+      name: document.getElementById('resName').value.trim(),
+      status: document.getElementById('resStatus').value.trim(),
+      owner: document.getElementById('resOwner').value.trim(),
+      contact: document.getElementById('resContact').value.trim(),
+      location: document.getElementById('resLocation').value.trim(),
+      nextAvailable: document.getElementById('resNextAvailable').value.trim()
+    };
+
+    // Validate required fields
+    if (!resourceData.name || !resourceData.status || !resourceData.owner || 
+        !resourceData.contact || !resourceData.location || !resourceData.nextAvailable) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/resources`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(resourceData)
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to add resource');
+      }
+
+      // Clear form and reload resources
+      form.reset();
+      await loadResources();
+    } catch (error) {
+      console.error('Error adding resource:', error);
+      alert('Failed to add resource: ' + error.message);
+    }
+  });
 </script>
 
 <footer>© 2025 Farmer-to-Farmer Knowledge Network 🌱</footer>

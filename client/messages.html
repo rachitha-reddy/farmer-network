@@ -372,7 +372,6 @@
       margin-right: 2px;
       cursor: pointer;
     }
-
     .messages-blank-box {
       background: #fff;
       flex: 1 1 600px;
@@ -427,52 +426,36 @@
     </nav>
   </div>
 </header>
+
 <div class="messages-layout">
   <div class="messages-sidebar">
     <div class="sidebar-header">
-      <span>Himavant</span>
-      <i class="fa fa-edit" title="New Message"></i>
+      <span id="sidebarCurrentUser"></span>
+      <i class="fa fa-edit" id="newMessageBtn" title="New Message" style="cursor: pointer;"></i>
     </div>
     <div class="sidebar-search">
       <i class="fa fa-search"></i>
-      <input id="sidebarUserSearch" type="text" placeholder="Search by username..."/>
+      <input id="sidebarUserSearch" type="text" autocomplete="off"/>
       <ul id="sidebarSearchSuggestions" class="search-suggestions-list"></ul>
     </div>
-    <div class="stories-row">
-      <div>
-        <img src="https://randomuser.me/api/portraits/men/24.jpg" class="story-avatar"/>
-        <div class="story-name">@nature_raj</div>
-      </div>
-      <div>
-        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="story-avatar"/>
-        <div class="story-name">@green_field</div>
-      </div>
-      <div>
-        <img src="https://randomuser.me/api/portraits/men/64.jpg" class="story-avatar"/>
-        <div class="story-name">@sunlover</div>
-      </div>
-      <div>
-        <img src="https://randomuser.me/api/portraits/women/70.jpg" class="story-avatar"/>
-        <div class="story-name">@travelbuddy</div>
-      </div>
-      <div>
-        <img src="https://randomuser.me/api/portraits/women/85.jpg" class="story-avatar"/>
-        <div class="story-name">@praveena_farmer</div>
-      </div>
-    </div>
+
+    <!-- contacts will be injected dynamically -->
     <div class="contacts-list" id="contactList"></div>
   </div>
+
   <div class="messages-main-box" id="messagesMainBox">
     <div class="chat-header">
-      <img src="https://randomuser.me/api/portraits/men/24.jpg" />
-      <span class="profile-user" id="chatWith">@nature_raj</span>
+      <img src="" id="chatHeaderAvatar" />
+      <span class="profile-user" id="chatWith"></span>
     </div>
-    <div class="chat-thread" id="chatThread">
-      <div class="chat-message">Hi, thanks for connecting! 🌱</div>
-      <div class="chat-message me">You're welcome! 😊 How can I help you?</div>
-    </div>
+
+    <!-- empty chat thread; messages added dynamically -->
+    <div class="chat-thread" id="chatThread"></div>
+
     <form class="chat-input-row" id="chatForm" autocomplete="off">
-      <button class="chat-action-btn" type="button" id="showEmojiPicker" title="Insert emoji"><i class="fa-regular fa-face-smile"></i></button>
+      <button class="chat-action-btn" type="button" id="showEmojiPicker" title="Insert emoji">
+        <i class="fa-regular fa-face-smile"></i>
+      </button>
       <div style="position: relative;">
         <label for="chat-image-input" class="chat-image-label" title="Send image/video">
           <i class="fa-regular fa-image"></i>
@@ -494,91 +477,268 @@
       </div>
     </form>
   </div>
+
   <div class="messages-blank-box" id="messagesBlankBox" style="display:none;">
     <div class="blank-msg-center">
       Your messages will be displayed here
     </div>
   </div>
 </div>
+
 <script>
-// Static demo usernames
-const usernames = [
-  { handle: '@nature_raj', name: 'nature_raj', img: 'https://randomuser.me/api/portraits/men/24.jpg' },
-  { handle: '@green_field', name: 'green_field', img: 'https://randomuser.me/api/portraits/men/32.jpg' },
-  { handle: '@sunlover', name: 'sunlover', img: 'https://randomuser.me/api/portraits/men/64.jpg' },
-  { handle: '@travelbuddy', name: 'travelbuddy', img: 'https://randomuser.me/api/portraits/women/70.jpg' },
-  { handle: '@praveena_farmer', name: 'praveena_farmer', img: 'https://randomuser.me/api/portraits/women/85.jpg' }
-];
-// Fill contacts list
+const API_BASE_URL = 'http://localhost:4000';
+
+// Check authentication
+const token = localStorage.getItem('token');
+if (!token) {
+  window.location.href = 'login.html';
+}
+
+// Helper function to get auth headers
+function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+}
+
+// Load current user info
+const currentUser = localStorage.getItem('username') || 'User';
+document.getElementById('sidebarCurrentUser').textContent = currentUser;
+
+// Usernames array - will be populated from API
+let usernames = []; // [{ handle, name, img, conversationId, lastMessage }, ...]
+
+// Active conversation ID
+let activeConversationId = null;
+
+// Load conversations from API
+async function loadConversations() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/conversations?user=${encodeURIComponent(currentUser)}`);
+    
+    if (res.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    if (!res.ok) {
+      throw new Error('Failed to load conversations');
+    }
+    
+    const data = await res.json();
+    usernames = data.conversations.map(conv => {
+      const other = conv.participants.find(p => p !== currentUser);
+      if (!other) return null; // Skip if no other participant found
+      const handle = other.startsWith('@') ? other : `@${other}`;
+      const img = conv.avatarMap && conv.avatarMap[other] ? (conv.avatarMap[other].startsWith('http') ? conv.avatarMap[other] : API_BASE_URL + conv.avatarMap[other]) : "";
+      return {
+        handle,
+        name: other,
+        img,
+        conversationId: conv._id,
+        lastMessage: conv.lastMessage || ""
+      };
+    }).filter(u => u !== null); // Remove null entries
+    
+    fillContacts();
+  } catch (err) {
+    console.error('Error loading conversations:', err);
+  }
+}
+
+// Fill contacts list from usernames array
 let chatBoxVisible = true;
 function fillContacts(filter = '') {
   const el = document.getElementById('contactList');
   el.innerHTML = '';
-  const found = usernames.filter(u => u.handle.toLowerCase().includes(filter));
-  found.forEach(({ handle, img }, i) => {
+  const found = usernames.filter(u => u.handle && u.handle.toLowerCase().includes(filter.toLowerCase()));
+  found.forEach(({ handle, img, lastMessage, conversationId }, i) => {
     const li = document.createElement('div');
-    li.className = 'contact-item' + (i == 0 ? ' active' : '');
-    li.innerHTML = `<img src="${img}" class="contact-avatar"/>
+    li.className = 'contact-item' + (i === 0 && !activeConversationId ? ' active' : '');
+    li.innerHTML = `
+      <img src="${img || ''}" class="contact-avatar"/>
       <div class="contact-info">
-        <div class="contact-name">${handle}</div>
-        <div class="contact-msg">Lorem ipsum...</div>
-      </div>`;
+        <div class="contact-name">${handle || ''}</div>
+        <div class="contact-msg">${lastMessage || ''}</div>
+      </div>
+    `;
+    
+    // Store conversationId on contact element
+    li.dataset.conversationId = conversationId;
+    
     let lastClick = 0;
-    li.onclick = function(e) {
+    li.onclick = async function() {
       const now = Date.now();
-      if (now - lastClick < 350) { // double click
+      if (now - lastClick < 350) {
+        // double click toggles chat panel / blank panel
         chatBoxVisible = !chatBoxVisible;
         document.getElementById('messagesMainBox').style.display = chatBoxVisible ? '' : 'none';
         document.getElementById('messagesBlankBox').style.display = chatBoxVisible ? 'none' : '';
         return;
       }
       lastClick = now;
+
       document.querySelectorAll('.contact-item').forEach(a => a.classList.remove('active'));
       li.classList.add('active');
-      document.getElementById('chatWith').textContent = handle;
-      document.querySelector('.chat-header img').src = img;
-      document.getElementById('chatThread').innerHTML = `<div class="chat-message">Hi! This is ${handle}.</div>`;
+
+      document.getElementById('chatWith').textContent = handle || '';
+      document.getElementById('chatHeaderAvatar').src = img || '';
+      
+      // Read conversationId from dataset
+      const convId = li.dataset.conversationId;
+      if (convId) {
+        activeConversationId = convId;
+        await loadMessages(convId);
+      } else {
+        document.getElementById('chatThread').innerHTML = ``;
+      }
+
       if (!chatBoxVisible) {
         document.getElementById('messagesMainBox').style.display = '';
         document.getElementById('messagesBlankBox').style.display = 'none';
         chatBoxVisible = true;
       }
-    }
+    };
     el.appendChild(li);
   });
 }
-fillContacts();
-// Sidebar username search logic
+
+// Load conversations on page load
+document.addEventListener('DOMContentLoaded', loadConversations);
+
+// New message button - opens search to start new conversation
+document.getElementById('newMessageBtn').onclick = function() {
+  sidebarUserSearch.focus();
+  sidebarUserSearch.click();
+};
+
+// Sidebar username search logic - searches all users
 const sidebarUserSearch = document.getElementById('sidebarUserSearch');
 const sidebarSuggestions = document.getElementById('sidebarSearchSuggestions');
+let searchTimeout = null;
+
 sidebarUserSearch.addEventListener('input', function() {
-  const val = sidebarUserSearch.value.trim().toLowerCase();
+  const val = sidebarUserSearch.value.trim();
   sidebarSuggestions.innerHTML = '';
+  
+  // Clear previous timeout
+  if (searchTimeout) {
+    clearTimeout(searchTimeout);
+  }
+  
   if (val.length === 0) {
     sidebarSuggestions.style.display = 'none';
     fillContacts();
     return;
   }
-  const matches = usernames.filter(u => u.handle.toLowerCase().includes(val));
-  if (matches.length === 0) {
-    sidebarSuggestions.style.display = 'none';
-    return;
-  }
-  matches.forEach(({ handle }) => {
-    const li = document.createElement('li');
-    li.textContent = handle;
-    li.onclick = () => {
-      sidebarUserSearch.value = handle;
-      fillContacts(handle.replace('@', ''));
-      sidebarSuggestions.style.display = 'none';
-    };
-    sidebarSuggestions.appendChild(li);
-  });
-  sidebarSuggestions.style.display = 'block';
+  
+  // Debounce search
+  searchTimeout = setTimeout(async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(val)}`, {
+        headers: getAuthHeaders()
+      });
+      
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      if (!res.ok) {
+        throw new Error('Failed to search users');
+      }
+      
+      const data = await res.json();
+      const users = data.users || [];
+      
+      if (users.length === 0) {
+        sidebarSuggestions.style.display = 'none';
+        return;
+      }
+      
+      users.forEach(user => {
+        const li = document.createElement('li');
+        const displayName = user.fullName || user.username;
+        li.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="${user.avatarUrl ? (user.avatarUrl.startsWith('http') ? user.avatarUrl : API_BASE_URL + user.avatarUrl) : ''}" 
+                 style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #4ac467;" />
+            <span>${displayName}</span>
+          </div>
+        `;
+        li.onclick = async () => {
+          sidebarUserSearch.value = '';
+          sidebarSuggestions.style.display = 'none';
+          await startConversation(user.username, user.fullName || user.username, user.avatarUrl || '');
+        };
+        sidebarSuggestions.appendChild(li);
+      });
+      
+      sidebarSuggestions.style.display = 'block';
+    } catch (err) {
+      console.error('Error searching users:', err);
+    }
+  }, 300);
 });
+
 document.body.addEventListener('click', function(e) {
-  if (e.target !== sidebarUserSearch) sidebarSuggestions.style.display = 'none';
+  if (!sidebarUserSearch.contains(e.target) && !sidebarSuggestions.contains(e.target)) {
+    sidebarSuggestions.style.display = 'none';
+  }
 });
+
+// Function to start a new conversation with a user
+async function startConversation(username, displayName, avatarUrl) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/conversations`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ participants: [currentUser, username] })
+    });
+    
+    if (res.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert('Failed to start conversation: ' + (error.error || 'Unknown error'));
+      return;
+    }
+    
+    const data = await res.json();
+    const conversation = data.conversation;
+    
+    // Update active conversation
+    activeConversationId = conversation._id;
+    
+    // Update chat header
+    const handle = username.startsWith('@') ? username : `@${username}`;
+    document.getElementById('chatWith').textContent = handle;
+    document.getElementById('chatHeaderAvatar').src = avatarUrl ? (avatarUrl.startsWith('http') ? avatarUrl : API_BASE_URL + avatarUrl) : '';
+    
+    // Load messages (will be empty for new conversation)
+    await loadMessages(conversation._id);
+    
+    // Show chat box
+    document.getElementById('messagesMainBox').style.display = '';
+    document.getElementById('messagesBlankBox').style.display = 'none';
+    chatBoxVisible = true;
+    
+    // Reload conversations to update the list
+    await loadConversations();
+  } catch (err) {
+    console.error('Error starting conversation:', err);
+    alert('Failed to start conversation. Please try again.');
+  }
+}
+
 // Emoji picker logic
 const emojiPicker = document.getElementById('emojiPicker');
 document.getElementById('showEmojiPicker').onclick = function(e) {
@@ -590,38 +750,112 @@ emojiPicker.querySelectorAll('span').forEach(function(span){
     document.getElementById('chatInput').value += span.textContent;
     emojiPicker.style.display = 'none';
     document.getElementById('chatInput').focus();
-  }
+  };
 });
 document.body.addEventListener('click', function(e){
-  if(!emojiPicker.contains(e.target) && e.target.id !== 'showEmojiPicker' && e.target.className !== 'fa-regular fa-face-smile'){
+  if(!emojiPicker.contains(e.target) &&
+     e.target.id !== 'showEmojiPicker' &&
+     e.target.className !== 'fa-regular fa-face-smile'){
     emojiPicker.style.display = 'none';
   }
 });
-// Message sending logic
-document.getElementById('chatForm').onsubmit = function(e) {
-  e.preventDefault();
-  const input = document.getElementById('chatInput');
-  const val = input.value.trim();
-  if(val) {
-    const msg = document.createElement('div');
-    msg.className = 'chat-message me';
-    msg.textContent = val;
-    document.getElementById('chatThread').appendChild(msg);
-    input.value = '';
-    document.getElementById('chatThread').scrollTop = document.getElementById('chatThread').scrollHeight;
+
+// Load messages for a conversation
+async function loadMessages(conversationId) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/conversations/${conversationId}/messages`);
+    
+    if (res.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    if (!res.ok) {
+      throw new Error('Failed to load messages');
+    }
+    
+    const data = await res.json();
+    const threadEl = document.getElementById('chatThread');
+    threadEl.innerHTML = "";
+    
+    data.messages.forEach(msg => {
+      const div = document.createElement('div');
+      div.className = 'chat-message' + (msg.sender === currentUser ? ' me' : '');
+      div.textContent = msg.text;
+      threadEl.appendChild(div);
+    });
+    
+    threadEl.scrollTop = threadEl.scrollHeight;
+  } catch (err) {
+    console.error('Error loading messages:', err);
   }
-};
-// Sending images (demo: display file name as message)
+}
+
+// Message sending logic
+async function sendMessage(e) {
+  e.preventDefault();
+  const chatInput = document.getElementById('chatInput');
+  const text = chatInput.value.trim();
+  
+  if (!text || !activeConversationId) {
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/conversations/${activeConversationId}/messages`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ text })
+    });
+    
+    if (res.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    if (!res.ok) {
+      const error = await res.json();
+      alert('Failed to send message: ' + (error.error || 'Unknown error'));
+      return;
+    }
+    
+    const data = await res.json();
+    
+    // Append the new message to chatThread
+    const chatThread = document.getElementById('chatThread');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-message me';
+    msgDiv.textContent = data.message.text;
+    chatThread.appendChild(msgDiv);
+    chatThread.scrollTop = chatThread.scrollHeight;
+    
+    // Clear input
+    chatInput.value = '';
+    
+    // Reload conversations to update lastMessage
+    await loadConversations();
+  } catch (err) {
+    console.error('Error sending message:', err);
+    alert('Failed to send message. Please try again.');
+  }
+}
+
+// Attach submit handler to chatForm
+document.getElementById('chatForm').addEventListener('submit', sendMessage);
+
+// Sending images - TODO: Implement image upload to backend
 document.getElementById('chat-image-input').onchange = function(e) {
   const file = e.target.files[0];
-  if(file) {
-    const msg = document.createElement('div');
-    msg.className = 'chat-message me';
-    msg.textContent = '📷 ' + file.name;
-    document.getElementById('chatThread').appendChild(msg);
-    document.getElementById('chatThread').scrollTop = document.getElementById('chatThread').scrollHeight;
+  if(file && activeConversationId) {
+    // For now, send as text message with file name
+    // TODO: Implement actual image upload to backend
+    const chatInput = document.getElementById('chatInput');
+    chatInput.value = '📷 ' + file.name;
+    sendMessage(e);
   }
-  e.target.value = ''; // reset
+  e.target.value = '';
 };
 </script>
 </body>

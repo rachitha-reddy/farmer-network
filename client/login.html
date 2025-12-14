@@ -183,14 +183,14 @@
 
     <div id="signupForm" class="hide">
       <div class="auth-header">Create a New Account</div>
-      <form>
+      <form id="signupFormElement">
         <div class="form-group">
           <label for="signupUsername">Username</label>
           <input type="text" id="signupUsername" required />
         </div>
         <div class="form-group">
-          <label for="signupEmail">Email</label>
-          <input type="email" id="signupEmail" required />
+          <label for="signupFullName">Full Name (optional)</label>
+          <input type="text" id="signupFullName" />
         </div>
         <div class="form-group">
           <label for="signupPassword">Password</label>
@@ -198,21 +198,128 @@
         </div>
         <button type="submit" class="btn-primary">Sign Up</button>
       </form>
+      <div id="signupMessage" style="margin-top: 12px; color: #d32f2f; font-weight: 600; display: none;"></div>
       <span class="toggle-link" id="showLogin">Already have an account? Log In</span>
     </div>
   </div>
   
   <script>
+    const API_BASE_URL = 'http://localhost:4000';
+    
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
+    const loginFormElement = loginForm.querySelector('form');
+    const signupFormElement = document.getElementById('signupFormElement');
+    const loginMessage = document.createElement('div');
+    loginMessage.style.cssText = 'margin-top: 12px; color: #d32f2f; font-weight: 600; display: none;';
+    loginForm.appendChild(loginMessage);
+    const signupMessage = document.getElementById('signupMessage');
+    
     document.getElementById('showSignup').onclick = () => {
       loginForm.classList.add('hide');
       signupForm.classList.remove('hide');
+      loginMessage.style.display = 'none';
+      signupMessage.style.display = 'none';
     };
     document.getElementById('showLogin').onclick = () => {
       signupForm.classList.add('hide');
       loginForm.classList.remove('hide');
+      loginMessage.style.display = 'none';
+      signupMessage.style.display = 'none';
     };
+    
+    // Signup form handler
+    signupFormElement.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      signupMessage.style.display = 'none';
+      
+      const username = document.getElementById('signupUsername').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const fullName = document.getElementById('signupFullName').value.trim();
+      
+      if (!username || !password) {
+        signupMessage.textContent = 'Username and password are required';
+        signupMessage.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, fullName: fullName || undefined })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          signupMessage.textContent = data.error || 'Registration failed';
+          signupMessage.style.display = 'block';
+          return;
+        }
+        
+        // Show success message and switch to login
+        signupMessage.textContent = 'Account created successfully! Please log in.';
+        signupMessage.style.color = '#2e7d32';
+        signupMessage.style.display = 'block';
+        
+        setTimeout(() => {
+          signupForm.classList.add('hide');
+          loginForm.classList.remove('hide');
+          signupFormElement.reset();
+          signupMessage.style.display = 'none';
+        }, 1500);
+      } catch (err) {
+        signupMessage.textContent = 'Network error. Please try again.';
+        signupMessage.style.display = 'block';
+        console.error('Signup error:', err);
+      }
+    });
+    
+    // Login form handler
+    loginFormElement.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginMessage.style.display = 'none';
+      
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!username || !password) {
+        loginMessage.textContent = 'Username and password are required';
+        loginMessage.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          loginMessage.textContent = data.error || 'Login failed';
+          loginMessage.style.display = 'block';
+          return;
+        }
+        
+        // Store token and user info
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.user.username);
+        if (data.user.userId) localStorage.setItem('userId', data.user.userId);
+        if (data.user.fullName) localStorage.setItem('fullName', data.user.fullName);
+        if (data.user.avatarUrl) localStorage.setItem('avatarUrl', data.user.avatarUrl);
+        
+        // Redirect to home
+        window.location.href = 'index.html';
+      } catch (err) {
+        loginMessage.textContent = 'Network error. Please try again.';
+        loginMessage.style.display = 'block';
+        console.error('Login error:', err);
+      }
+    });
   </script>
 </body>
 </html>
